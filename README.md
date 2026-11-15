@@ -76,6 +76,24 @@ Refundavio is a native Android return and refund tracker designed for phones and
 | --- | --- | --- |
 | ![Refundavio के हिन्दी डैशबोर्ड में बकाया और मिले हुए रिफ़ंड, वापसी की अंतिम तारीखें और दोबारा संपर्क वाले विक्रेता दिखते हैं।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-01-refund-tracker.png) | ![हिन्दी वापसी सूची में भेजने के लिए बाकी खरीदारी और आंशिक या पूरे रिफ़ंड की स्थिति दिखती है।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-02-return-deadlines.png) | ![हिन्दी वारंटी स्क्रीन में नमूने के तौर पर एक कॉम्पैक्ट स्कैनर और उसकी वारंटी खत्म होने की तारीख दिखती है।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-03-warranty-expiry.png) |
 
+### 한국어
+
+| 환불 추적 | 반품 기한 | 보증 만료일 |
+| --- | --- | --- |
+| ![Refundavio 한국어 대시보드에서 통화별 미수령 환불액, 받은 환불, 반품 기한, 판매자 후속 문의를 볼 수 있습니다.](deliverables/store-assets/screenshots/refundavio-ko-kr-fire-tablet-01-refund-tracker.png) | ![한국어 반품 목록에 발송 대기 중인 구매와 일부 또는 전액 환불된 구매가 표시됩니다.](deliverables/store-assets/screenshots/refundavio-ko-kr-fire-tablet-02-return-deadlines.png) | ![한국어 보증 화면에 예시 상품인 소형 스캐너와 보증 만료일이 표시됩니다.](deliverables/store-assets/screenshots/refundavio-ko-kr-fire-tablet-03-warranty-expiry.png) |
+
+### 简体中文
+
+| 退款跟踪 | 退货期限 | 保修到期 |
+| --- | --- | --- |
+| ![Refundavio 简体中文总览显示各币种的待退款金额、已收到的退款、退货期限和商家跟进事项。](deliverables/store-assets/screenshots/refundavio-zh-hans-fire-tablet-01-refund-tracker.png) | ![简体中文退货列表显示等待寄出的商品，以及已部分退款或全额退款的购物记录。](deliverables/store-assets/screenshots/refundavio-zh-hans-fire-tablet-02-return-deadlines.png) | ![简体中文保修页面显示一台示例便携式扫描仪及其保修到期日。](deliverables/store-assets/screenshots/refundavio-zh-hans-fire-tablet-03-warranty-expiry.png) |
+
+### 繁體中文
+
+| 退款追蹤 | 退貨期限 | 保固到期 |
+| --- | --- | --- |
+| ![Refundavio 繁體中文總覽顯示各幣別的待退款金額、已收到的退款、退貨期限和商家追蹤事項。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-01-refund-tracker.png) | ![繁體中文退貨清單列出等待寄出的商品，以及已部分退款或全額退款的購物紀錄。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-02-return-deadlines.png) | ![繁體中文保固畫面顯示一部範例小型掃描器及其保固到期日。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-03-warranty-expiry.png) |
+
 ## Run and build
 
 Install JDK 17 and Android SDK Platform 35 with Build Tools 35.0.0. Set `ANDROID_HOME` to the SDK directory or set `sdk.dir` in an untracked `local.properties`. The first build requires access to Google Maven and Maven Central. No credentials, backend, or `.env` file are required.

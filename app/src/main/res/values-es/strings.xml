@@ -125,10 +125,12 @@
     <string name="erase_warning">Se eliminarán permanentemente de Refundavio todas las compras, los reembolsos registrados y el historial de contactos.</string>
     <plurals name="pending_cases">
         <item quantity="one">%d reembolso pendiente</item>
+        <item quantity="many">%d reembolsos pendientes</item>
         <item quantity="other">%d reembolsos pendientes</item>
     </plurals>
     <plurals name="days_away">
         <item quantity="one">En %d día</item>
+        <item quantity="many">En %d días</item>
         <item quantity="other">En %d días</item>
     </plurals>
     <string name="read_error">No se pudieron abrir tus registros.</string>

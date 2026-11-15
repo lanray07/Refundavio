@@ -23,7 +23,8 @@ jobs:
       - name: Start Android tablet emulator
         run: |
           sudo chmod 666 /dev/kvm
-          sdkmanager "system-images;android-35;google_apis;x86_64"
+          export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          sdkmanager "emulator" "system-images;android-35;google_apis;x86_64"
           echo no | avdmanager create avd --name refundavio-qa --package "system-images;android-35;google_apis;x86_64"
           "$ANDROID_HOME/emulator/emulator" -avd refundavio-qa -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > "$RUNNER_TEMP/refundavio-emu.log" 2>&1 &
           timeout 240 adb wait-for-device
@@ -32,9 +33,14 @@ jobs:
           adb shell wm size 800x1280
           adb shell wm density 160
       - name: Test saved refund journey and capture dashboard
+        run: bash ./gradlew connectedDebugAndroidTest
+      - name: Collect dashboard screenshot
+        if: always()
         run: |
-          bash ./gradlew connectedDebugAndroidTest
-          adb pull /sdcard/Android/data/app.refundavio/files/dashboard-qa.png app/build/dashboard-qa.png
+          adb="$ANDROID_HOME/platform-tools/adb"
+          if "$adb" shell run-as app.refundavio test -s files/dashboard-qa.png; then
+            "$adb" exec-out run-as app.refundavio cat files/dashboard-qa.png > app/build/dashboard-qa.png
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

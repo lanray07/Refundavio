@@ -125,10 +125,12 @@
     <string name="erase_warning">Les achats, les remboursements enregistrés et l’historique des échanges seront définitivement effacés de Refundavio.</string>
     <plurals name="pending_cases">
         <item quantity="one">%d remboursement en attente</item>
+        <item quantity="many">%d de remboursements en attente</item>
         <item quantity="other">%d remboursements en attente</item>
     </plurals>
     <plurals name="days_away">
         <item quantity="one">Dans %d jour</item>
+        <item quantity="many">Dans %d de jours</item>
         <item quantity="other">Dans %d jours</item>
     </plurals>
     <string name="read_error">Impossible d’ouvrir vos dossiers.</string>

@@ -75,7 +75,7 @@ class DashboardJourneyTest {
         ui.onAllNodesWithText(context.getString(R.string.followups)).onFirst().assertIsDisplayed()
         ui.waitForIdle()
         val screenshot = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
-        File(requireNotNull(context.getExternalFilesDir(null)), "dashboard-qa.png").outputStream().use {
+        File(context.filesDir, "dashboard-qa.png").outputStream().use {
             check(screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it))
         }
     }

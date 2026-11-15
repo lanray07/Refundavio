@@ -347,6 +347,10 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         "it-IT" to "Italiano",
         "ja-JP" to "日本語",
         "pt-BR" to "Português (Brasil)",
+        "nl-NL" to "Nederlands",
+        "pl-PL" to "Polski",
+        "pt-PT" to "Português (Portugal)",
+        "sv-SE" to "Svenska",
     )
     val localPrefs = remember { context.getSharedPreferences("preferences", 0) }
     val index = languageOptions.indexOfFirst { it.first == localPrefs.getString("locale", "") }.coerceAtLeast(0)

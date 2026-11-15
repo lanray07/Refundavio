@@ -63,6 +63,6 @@ Compose renders five destinations with a navigation rail on wider displays. An A
 
 The purchase editor includes warranty expiry, optional parcel details and one Android document-picker attachment. Files remain with their selected provider. Voice shortcuts accept selected, typed or device-recognised commands for outstanding refunds, deadlines and merchant follow-ups. Spoken summaries are opt-in and depend on device speech support. Device speech services may use the internet.
 
-The interface and in-app privacy policy are available in English, Spanish, French, Arabic, German, Italian, Japanese and Brazilian Portuguese. Refundavio uses the device language by default, with English fallback for unsupported locales. Choose a language under **More** to override it. Amounts and dates use the active locale. The translations still need native-language review.
+The interface and in-app privacy policy are available in English, Spanish, French, Arabic, German, Italian, Japanese, Brazilian Portuguese, Dutch, Polish, European Portuguese and Swedish. Refundavio uses the device language by default, with English fallback for unsupported locales. Choose a language under **More** to override it. Amounts and dates use the active locale. The translations still need native-language review.
 
 See [release notes and verification scope](deliverables/reports/readiness.md).

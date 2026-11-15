@@ -22,7 +22,7 @@ class DashboardJourneyTest {
 
     @After fun removeFixture() = runBlocking {
         fixtureId?.let { id ->
-            fixtureLedger().use { it.ledger().remove(id) }
+            withFixtureLedger { it.ledger().remove(id) }
         }
         Unit
     }
@@ -44,7 +44,7 @@ class DashboardJourneyTest {
         ui.onNodeWithText(context.getString(R.string.save)).performClick()
         ui.waitUntil(10_000) { ui.onAllNodesWithText(item).fetchSemanticsNodes().isNotEmpty() }
         fixtureId = runBlocking {
-            fixtureLedger().use { database ->
+            withFixtureLedger { database ->
                 database.query("SELECT id FROM cases WHERE item = ? ORDER BY id DESC LIMIT 1", arrayOf(item)).use {
                     if (it.moveToFirst()) it.getLong(0) else error("Saved purchase missing from Room")
                 }
@@ -58,7 +58,7 @@ class DashboardJourneyTest {
         ui.waitUntil(10_000) { ui.onAllNodesWithText(context.getString(R.string.status_partial)).fetchSemanticsNodes().isNotEmpty() }
         val day = LocalDate.now()
         runBlocking {
-            fixtureLedger().use {
+            withFixtureLedger {
                 val saved = requireNotNull(it.ledger().get(requireNotNull(fixtureId))).snapshot()
                 check(saved.outstanding.longValueExact() == 5000L && saved.receipts.single().day == day)
             }
@@ -80,6 +80,9 @@ class DashboardJourneyTest {
         }
     }
 
-    private fun fixtureLedger() = Room.databaseBuilder(ApplicationProvider.getApplicationContext<Context>(), LedgerDb::class.java,
-        "refundavio.db").build()
+    private suspend fun <T> withFixtureLedger(action: suspend (LedgerDb) -> T): T {
+        val database = Room.databaseBuilder(ApplicationProvider.getApplicationContext<Context>(),
+            LedgerDb::class.java, "refundavio.db").build()
+        return try { action(database) } finally { database.close() }
+    }
 }

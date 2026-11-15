@@ -64,6 +64,18 @@ Refundavio is a native Android return and refund tracker designed for phones and
 | --- | --- | --- |
 | ![Refundavios svenska exempelöversikt visar väntande och mottagna återbetalningar, returfrister och uppföljningar med butiker.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-01-vantande-aterbetalningar.png) | ![Svensk returlista med varor som väntar på att skickas samt delvis och helt återbetalda köp.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-02-returfrister.png) | ![Den svenska garantivyn visar en exempelskanner och datumet då garantin går ut.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-03-garantidatum.png) |
 
+### العربية
+
+| تتبّع الاسترداد | مواعيد الإرجاع | انتهاء الضمان |
+| --- | --- | --- |
+| ![لوحة Refundavio بالعربية من اليمين إلى اليسار تعرض مبالغ الاسترداد المعلّقة والمستلمة، ومواعيد الإرجاع ومتابعات المتاجر.](deliverables/store-assets/screenshots/refundavio-ar-fire-tablet-01-refund-tracker.png) | ![قائمة المرتجعات بالعربية تعرض مشتريات بانتظار الشحن وأخرى استُردّ ثمنها جزئيًا أو بالكامل.](deliverables/store-assets/screenshots/refundavio-ar-fire-tablet-02-return-deadlines.png) | ![شاشة الضمانات بالعربية تعرض ماسحًا ضوئيًا كمثال وتاريخ انتهاء ضمانه.](deliverables/store-assets/screenshots/refundavio-ar-fire-tablet-03-warranty-expiry.png) |
+
+### हिन्दी
+
+| रिफ़ंड का हिसाब | वापसी की तारीखें | वारंटी की तारीखें |
+| --- | --- | --- |
+| ![Refundavio के हिन्दी डैशबोर्ड में बकाया और मिले हुए रिफ़ंड, वापसी की अंतिम तारीखें और दोबारा संपर्क वाले विक्रेता दिखते हैं।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-01-refund-tracker.png) | ![हिन्दी वापसी सूची में भेजने के लिए बाकी खरीदारी और आंशिक या पूरे रिफ़ंड की स्थिति दिखती है।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-02-return-deadlines.png) | ![हिन्दी वारंटी स्क्रीन में नमूने के तौर पर एक कॉम्पैक्ट स्कैनर और उसकी वारंटी खत्म होने की तारीख दिखती है।](deliverables/store-assets/screenshots/refundavio-hi-in-fire-tablet-03-warranty-expiry.png) |
+
 ## Run and build
 
 Install JDK 17 and Android SDK Platform 35 with Build Tools 35.0.0. Set `ANDROID_HOME` to the SDK directory or set `sdk.dir` in an untracked `local.properties`. The first build requires access to Google Maven and Maven Central. No credentials, backend, or `.env` file are required.

@@ -42,6 +42,7 @@ jobs:
             grep -F 'OK (1 test)' app/build/capture-test.txt
             adb exec-out run-as app.refundavio cat files/dashboard-qa.png > app/build/dashboard-qa.png
             python3 -c 'from pathlib import Path; assert Path("app/build/dashboard-qa.png").read_bytes().startswith(bytes.fromhex("89504e470d0a1a0a"))'
+            bash -o pipefail -c 'pwsh -NoProfile -File scripts/test-closed-reminders.ps1 -Package app.refundavio -DisposableEmulator | tee app/build/closed-reminders.txt'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -51,3 +52,4 @@ jobs:
             app/build/test-results/
             app/build/outputs/androidTest-results/
             app/build/dashboard-qa.png
+            app/build/closed-reminders.txt

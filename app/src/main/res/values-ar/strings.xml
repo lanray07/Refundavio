@@ -141,4 +141,26 @@
     </plurals>
     <string name="read_error">تعذّر فتح سجلاتك.</string>
     <string name="retry">حاول مجدداً</string>
+    <string name="reminder_settings">تذكيرات في الخلفية</string>
+    <string name="reminder_intro">اختر التذكيرات التي تريدها. لا تتضمن التنبيهات تفاصيل المشتريات أو المتاجر.</string>
+    <string name="reminder_lead">ذكّرني قبل الموعد النهائي للإرجاع</string>
+    <string name="reminder_on_day">في الموعد النهائي</string>
+    <string name="reminder_custom">مهلة مخصصة</string>
+    <string name="reminder_custom_range">عدد الأيام قبل الموعد النهائي (٠–٣٠)</string>
+    <string name="reminder_clear_custom">إزالة المهلة المخصصة</string>
+    <string name="reminder_time">وقت التنبيه المفضل</string>
+    <string name="reminder_followup_hint">تستخدم تذكيرات المتابعة الموعد التالي الذي تحفظه لكل مرتجع.</string>
+    <string name="reminder_timing">تستخدم التذكيرات التوقيت المحلي لجهازك. قد يؤخرها نظام Android لتوفير طاقة البطارية.</string>
+    <string name="reminder_blocked">تم إيقاف إشعار تذكير واحد أو أكثر في إعدادات Android.</string>
+    <string name="reminder_system_settings">فتح إعدادات الإشعارات</string>
+    <string name="reminder_deadline_notice">افتح Refundavio لمراجعة مواعيد الإرجاع المقبلة.</string>
+    <string name="reminder_followup_notice">افتح Refundavio لمراجعة متابعات المتاجر المجدولة.</string>
+    <plurals name="reminder_days_before">
+        <item quantity="zero">قبل %d يوم</item>
+        <item quantity="one">قبل يوم واحد (%d)</item>
+        <item quantity="two">قبل يومين (%d)</item>
+        <item quantity="few">قبل %d أيام</item>
+        <item quantity="many">قبل %d يوماً</item>
+        <item quantity="other">قبل %d يوم</item>
+    </plurals>
 </resources>

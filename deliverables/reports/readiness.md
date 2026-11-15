@@ -15,7 +15,7 @@ The APK has no internet permission or embedded service keys. Records use the app
 ## Still required before submission
 
 - Expand the purchase model to independent order, item, return and merchant entities, with multiple products per order, archiving and richer parcel, merchant, warranty and evidence histories.
-- Add and verify Android notifications, configurable lead times, CSV/PDF exports and encrypted backups. Dashboard due dates and rescheduling exist; no background reminders are delivered.
+- Check background reminder timing and notification permission handling on physical Fire tablets and add CSV/PDF exports and encrypted backups.
 - Expand localisation to the complete brief, review translations, verify all relevant device speech services, and generate eight real app screenshots for every approved Amazon listing locale.
 - Integrate and sandbox-test Amazon billing with a configured non-consumable product, restore and receipt verification. Configure signing, verify Fire hardware, confirm current submission criteria, prepare store assets and obtain release approval.
 - The local follow-up draft is an editable template. Remote AI is not connected.

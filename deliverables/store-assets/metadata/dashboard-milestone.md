@@ -57,4 +57,4 @@ Conservez les détails d’achat, un reçu ou une preuve de retour et la date de
 
 ## Release and review notes
 
-For category selection, start with Shopping if the current console offers it. Use the sample dashboard in reviewer instructions so testers can see the dashboard without entering their own information. Account credentials are not required. Background alerts, automatic merchant tracking and Premium purchases are not part of this milestone and should not appear in the listing or screenshots. The privacy disclosure and final images depend on the actual shipping build and verified devices.
+For category selection, start with Shopping if the current console offers it. Use the sample dashboard in reviewer instructions so testers can see the dashboard without entering their own information. Account credentials are not required. This copy was written for the original dashboard milestone; confirm the shipping build and device tests before adding claims about the newer background reminders. Automatic merchant tracking and Premium purchases are not in this build. The privacy disclosure and final images depend on the actual shipping build and verified devices.

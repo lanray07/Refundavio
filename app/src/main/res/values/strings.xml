@@ -133,4 +133,22 @@
     </plurals>
     <string name="read_error">Couldn’t open your records.</string>
     <string name="retry">Try again</string>
+    <string name="reminder_settings">Background reminders</string>
+    <string name="reminder_intro">Choose which reminders you want. Alerts do not include purchase or merchant details.</string>
+    <string name="reminder_lead">Remind me before a return deadline</string>
+    <string name="reminder_on_day">On the deadline</string>
+    <string name="reminder_custom">Custom lead time</string>
+    <string name="reminder_custom_range">Days before the deadline (0–30)</string>
+    <string name="reminder_clear_custom">Remove custom time</string>
+    <string name="reminder_time">Preferred alert time</string>
+    <string name="reminder_followup_hint">Follow-up reminders use the next follow-up date you save on each return.</string>
+    <string name="reminder_timing">Reminders use your device’s local time. Android may deliver them later to save battery.</string>
+    <string name="reminder_blocked">One or more reminder notifications are turned off in Android settings.</string>
+    <string name="reminder_system_settings">Open notification settings</string>
+    <string name="reminder_deadline_notice">Open Refundavio to review your upcoming return deadlines.</string>
+    <string name="reminder_followup_notice">Open Refundavio to review your scheduled merchant follow-ups.</string>
+    <plurals name="reminder_days_before">
+        <item quantity="one">%d day before</item>
+        <item quantity="other">%d days before</item>
+    </plurals>
 </resources>

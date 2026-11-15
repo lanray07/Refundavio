@@ -334,6 +334,7 @@ private fun Confirm(title: Int, message: Int, close: () -> Unit, action: () -> U
 internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo: Boolean, toggleDemo: () -> Unit,
                           erase: () -> Unit, voice: () -> Unit) {
     var confirm by rememberSaveable { mutableStateOf(false) }
+    var reminders by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val languageOptions = listOf("", "en", "es", "fr", "ar")
     val languages = listOf(stringResource(R.string.device_language), "English", "Español", "Français", "العربية")
@@ -349,6 +350,11 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
             Text(stringResource(R.string.spoken_feedback), Modifier.weight(1f)); Switch(spoken, changeSpoken)
         }
         OutlinedButton(onClick = voice, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.voice_title)) }
+        OutlinedButton(onClick = { reminders = true }, modifier = Modifier.fillMaxWidth()) {
+            Icon(painter = androidx.compose.ui.res.painterResource(R.drawable.ic_reminder), contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.reminder_settings))
+        }
         HorizontalDivider()
         Text(stringResource(R.string.demo_hint))
         OutlinedButton(onClick = toggleDemo, modifier = Modifier.fillMaxWidth()) {
@@ -359,4 +365,5 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         TextButton(onClick = { confirm = true }, enabled = !demo) { Text(stringResource(R.string.erase_data), color = MaterialTheme.colorScheme.error) }
     }
     if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
+    if (reminders) ReminderSettingsDialog { reminders = false }
 }

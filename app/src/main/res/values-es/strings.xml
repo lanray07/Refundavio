@@ -135,4 +135,23 @@
     </plurals>
     <string name="read_error">No se pudieron abrir tus registros.</string>
     <string name="retry">Intentar de nuevo</string>
+    <string name="reminder_settings">Recordatorios en segundo plano</string>
+    <string name="reminder_intro">Elige los recordatorios que quieras recibir. Los avisos no incluyen datos de compras ni de comercios.</string>
+    <string name="reminder_lead">Avisarme antes del plazo de devolución</string>
+    <string name="reminder_on_day">El día del vencimiento</string>
+    <string name="reminder_custom">Antelación personalizada</string>
+    <string name="reminder_custom_range">Días antes del vencimiento (0–30)</string>
+    <string name="reminder_clear_custom">Quitar la antelación personalizada</string>
+    <string name="reminder_time">Hora preferida del aviso</string>
+    <string name="reminder_followup_hint">Los recordatorios de seguimiento usan la próxima fecha de seguimiento que guardes en cada devolución.</string>
+    <string name="reminder_timing">Los recordatorios usan la hora local del dispositivo. Android puede retrasarlos para ahorrar batería.</string>
+    <string name="reminder_blocked">Uno o más avisos de recordatorio están desactivados en los ajustes de Android.</string>
+    <string name="reminder_system_settings">Abrir los ajustes de notificaciones</string>
+    <string name="reminder_deadline_notice">Abre Refundavio para revisar tus próximos plazos de devolución.</string>
+    <string name="reminder_followup_notice">Abre Refundavio para revisar el seguimiento programado de los comercios.</string>
+    <plurals name="reminder_days_before">
+        <item quantity="one">%d día antes</item>
+        <item quantity="many">%d días antes</item>
+        <item quantity="other">%d días antes</item>
+    </plurals>
 </resources>

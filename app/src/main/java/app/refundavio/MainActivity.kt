@@ -49,23 +49,38 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+    private var reminderDestination by mutableStateOf<ReminderKind?>(null)
+
     override fun attachBaseContext(base: android.content.Context) {
-        val tag = base.getSharedPreferences("preferences", 0).getString("locale", "").orEmpty()
-        if (tag.isEmpty()) return super.attachBaseContext(base)
-        val requested = Locale.forLanguageTag(tag)
-        val locale = if (base.resources.configuration.locales[0].language == requested.language)
-            base.resources.configuration.locales[0] else requested
-        val config = android.content.res.Configuration(base.resources.configuration).apply { setLocale(locale) }
-        super.attachBaseContext(base.createConfigurationContext(config))
+        super.attachBaseContext(localizedAppContext(base))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        acceptReminder(intent)
         enableEdgeToEdge()
         setContent {
             val dark = isSystemInDarkTheme()
-            MaterialTheme(colorScheme = if (dark) Dark else Light) { Refundavio() }
+            MaterialTheme(colorScheme = if (dark) Dark else Light) {
+                Refundavio(reminderDestination, { reminderDestination = null })
+            }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        acceptReminder(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ReminderScheduler.request(this)
+    }
+
+    private fun acceptReminder(intent: Intent) {
+        val kind = intent.getStringExtra(REMINDER_DESTINATION) ?: return
+        reminderDestination = ReminderKind.entries.firstOrNull { it.name == kind }
+        intent.removeExtra(REMINDER_DESTINATION)
     }
 }
 
@@ -98,7 +113,7 @@ internal fun defaultCurrency(locale: Locale): String =
     runCatching { java.util.Currency.getInstance(locale).currencyCode }.getOrNull()?.takeIf(Money::valid) ?: "GBP"
 
 @Composable
-private fun Refundavio(model: LedgerModel = viewModel()) {
+private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -> Unit, model: LedgerModel = viewModel()) {
     val state by model.cases.collectAsStateWithLifecycle()
     val data = (state as? LedgerState.Ready)?.cases
     val error by model.error.collectAsStateWithLifecycle()
@@ -149,6 +164,16 @@ private fun Refundavio(model: LedgerModel = viewModel()) {
 
     fun openTab(destination: Tab, start: Int = 0) { tab = destination; filter = start }
     fun onVoice() { transcript = ""; voiceError = false; voiceOpen = true }
+    LaunchedEffect(reminderDestination) {
+        if (reminderDestination != null) {
+            demo = false
+            recordId = null
+            editorId = null
+            voiceOpen = false
+            openTab(Tab.RETURNS, if (reminderDestination == ReminderKind.DEADLINE) 1 else 2)
+            consumeReminder()
+        }
+    }
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val wide = maxWidth >= 720.dp
         Row(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {

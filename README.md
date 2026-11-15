@@ -15,6 +15,21 @@ Minimum API 26; target API 35. A release build is unsigned. The package name is 
 
 Run `./gradlew connectedDebugAndroidTest` on a fresh English-language Android test device or emulator to verify the dashboard journey and capture a sample dashboard image. The GitHub Actions workflow uses an 800 × 1280 Android 15 tablet emulator.
 
+## Background reminders
+
+Open **More → Background reminders**. Enable return deadlines and merchant follow-ups separately, and allow notifications when prompted. Choose one or more deadline lead times (7, 3, 1, or 0 days, plus a custom 0–30 day offset), and set the preferred time. For merchant follow-ups, Refundavio uses the next follow-up date saved on each return.
+
+Reminders are opt-in and run offline. Android schedules them after the preferred local time, including when the app is closed; its power settings can delay delivery. A device restart or a clock or time-zone change rebuilds the schedule after Android allows the app to run. Android's **Force stop** action suspends delivery until the app is reopened. Notifications keep merchant names, items and amounts private. Tap a notification to open its dashboard queue.
+
+To run the closed-app check on a personal device, build the isolated QA APKs, install both APKs with ADB, then run the test script. The script grants notifications to the QA package, schedules a real alarm, confirms the app process has exited, and checks Android's notification list without reopening the app.
+
+```powershell
+.\gradlew.bat -PrefundavioQa=true assembleDebug assembleDebugAndroidTest
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+pwsh -File scripts/test-closed-reminders.ps1
+```
+
 ## Try the dashboard
 
 - For a read-only tour, open **More → Preview sample dashboard**. Sample purchases never enter the local ledger.

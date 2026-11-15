@@ -135,4 +135,23 @@
     </plurals>
     <string name="read_error">Impossible d’ouvrir vos dossiers.</string>
     <string name="retry">Réessayer</string>
+    <string name="reminder_settings">Rappels en arrière-plan</string>
+    <string name="reminder_intro">Choisissez les rappels à recevoir. Les alertes ne contiennent aucun détail sur les achats ou les commerçants.</string>
+    <string name="reminder_lead">Me rappeler avant la date limite de retour</string>
+    <string name="reminder_on_day">À la date limite</string>
+    <string name="reminder_custom">Délai personnalisé</string>
+    <string name="reminder_custom_range">Jours avant la date limite (0–30)</string>
+    <string name="reminder_clear_custom">Supprimer le délai personnalisé</string>
+    <string name="reminder_time">Heure préférée du rappel</string>
+    <string name="reminder_followup_hint">Les rappels de relance utilisent la prochaine date de relance enregistrée pour chaque retour.</string>
+    <string name="reminder_timing">Les rappels utilisent l’heure locale de l’appareil. Android peut les différer pour économiser la batterie.</string>
+    <string name="reminder_blocked">Au moins une notification de rappel est désactivée dans les paramètres Android.</string>
+    <string name="reminder_system_settings">Ouvrir les paramètres de notification</string>
+    <string name="reminder_deadline_notice">Ouvrez Refundavio pour consulter vos prochaines dates limites de retour.</string>
+    <string name="reminder_followup_notice">Ouvrez Refundavio pour consulter les relances que vous avez planifiées.</string>
+    <plurals name="reminder_days_before">
+        <item quantity="one">%d jour avant</item>
+        <item quantity="many">%d de jours avant</item>
+        <item quantity="other">%d jours avant</item>
+    </plurals>
 </resources>

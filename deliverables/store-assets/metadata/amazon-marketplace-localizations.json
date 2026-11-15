@@ -1,0 +1,159 @@
+{
+  "de-DE": {
+    "title": "Refundavio - Retouren und Erstattungen",
+    "short": "Behalte Retourenfristen, offene Erstattungen und Rückfragen bei Händlern im Blick. Deine Daten bleiben auf deinem Gerät.",
+    "long": "Sieh nach, welche Erstattungen noch offen sind und welche Artikel bald zurückgeschickt werden müssen. Erfasse eingehende Zahlungen und Teilbeträge und prüfe die Summen nach Währung. Speichere Belege, Garantiefristen und Rückfragen zu deinen Einkäufen. Richte bei Bedarf Erinnerungen ein. Deine Daten sind offline und ohne Konto verfügbar.",
+    "features": [
+      "Offene Erstattungen nach Währung",
+      "Erinnerungen für Retouren und Rückfragen",
+      "Teilrückerstattungen erfassen",
+      "Belege und Garantiefristen verwalten",
+      "Kaufdaten offline einsehen"
+    ],
+    "keywords": "Retouren, Rückerstattung, Erstattung, Rückgabefrist, Händler, Garantie, Belege"
+  },
+  "en-AU": {
+    "title": "Refundavio - Returns & Refund Tracker",
+    "short": "Track refunds, return deadlines and merchant follow-ups. Keep purchase records on your device and use optional reminders.",
+    "long": "See what you are owed and which purchases need to go back soon. Record payments and partial refunds, and view outstanding amounts by currency. Keep receipts and warranty dates with your purchases. Set reminders for return deadlines and follow-ups with retailers. Your records are available offline without an account.",
+    "features": [
+      "Refund balances by currency",
+      "Return and retailer follow-up reminders",
+      "Partial refund tracking",
+      "Receipts and warranty dates",
+      "Offline records without an account"
+    ],
+    "keywords": "returns, refund tracker, retailer, return deadline, partial refund, receipt organiser, warranty"
+  },
+  "en-GB": {
+    "title": "Refundavio - Returns & Refund Tracker",
+    "short": "Track refunds, return deadlines and shop follow-ups. Keep your records on your device with optional reminders.",
+    "long": "See which refunds are outstanding and which parcels need sending back. Record each refund as it arrives, including part payments, and view balances by currency. Keep receipts and warranty dates with purchases. Set reminders for return deadlines and follow-ups with shops. Your records are available offline without an account.",
+    "features": [
+      "Outstanding refunds by currency",
+      "Return deadline and shop follow-up reminders",
+      "Track part payments",
+      "Keep receipts and warranty dates together",
+      "Use records offline without an account"
+    ],
+    "keywords": "refund tracker, shopping returns, parcel return, return deadline, part payment, receipt organiser, warranty"
+  },
+  "en-IN": {
+    "title": "Refundavio - Returns & Refund Tracker",
+    "short": "Track pending refunds, return deadlines and seller follow-ups. Keep records on your device and set optional reminders.",
+    "long": "See which refunds are pending and which purchases need to be returned soon. Record refunds and partial payments as they arrive, and view outstanding amounts by currency. Keep receipts and warranty dates with each purchase. Set reminders for return dates and follow-ups with sellers. Access your records offline without an account.",
+    "features": [
+      "Pending refund balances by currency",
+      "Return deadline and seller follow-up reminders",
+      "Record partial refunds",
+      "Save receipts and warranty dates",
+      "Offline purchase records"
+    ],
+    "keywords": "refund tracker, pending refund, return window, seller follow-up, receipt, warranty"
+  },
+  "es-MX": {
+    "title": "Refundavio - Devoluciones y reembolsos",
+    "short": "Consulta tus reembolsos pendientes, fechas límite de devolución y seguimientos con tiendas. Guarda los registros en tu dispositivo.",
+    "long": "Revisa cuáles reembolsos siguen pendientes y qué productos debes devolver pronto. Registra cada pago y los reembolsos parciales. Consulta los saldos por moneda, guarda comprobantes y fechas de garantía, y activa recordatorios para devoluciones o seguimientos con tiendas. Tus registros se pueden consultar sin conexión y sin crear una cuenta.",
+    "features": [
+      "Saldos de reembolsos por moneda",
+      "Recordatorios de devoluciones y seguimiento",
+      "Registro de reembolsos parciales",
+      "Comprobantes y fechas de garantía",
+      "Consulta sin conexión y sin cuenta"
+    ],
+    "keywords": "reembolsos, devoluciones, fecha límite, seguimiento, comprobantes, garantía"
+  },
+  "it-IT": {
+    "title": "Refundavio - Resi e rimborsi",
+    "short": "Tieni sotto controllo i rimborsi in sospeso, le scadenze dei resi e i solleciti ai negozi. I dati restano sul tuo dispositivo.",
+    "long": "Scopri quali rimborsi stai ancora aspettando e quali articoli devi restituire a breve. Registra i pagamenti ricevuti, anche parziali, e consulta gli importi per valuta. Conserva ricevute e date di garanzia insieme agli acquisti. Imposta promemoria per le scadenze dei resi e per ricontattare i venditori. I dati sono disponibili offline senza account.",
+    "features": [
+      "Rimborsi in sospeso per valuta",
+      "Promemoria per resi e solleciti",
+      "Registrazione dei rimborsi parziali",
+      "Ricevute e scadenze delle garanzie",
+      "Dati consultabili offline"
+    ],
+    "keywords": "resi, rimborsi, scadenza, promemoria, ricevute, garanzia"
+  },
+  "ja-JP": {
+    "title": "Refundavio - 返品・返金管理",
+    "short": "返金待ちの金額、返品期限、店舗への再連絡をまとめて管理。購入記録は端末に保存されます。",
+    "long": "返金待ちの金額や、返品期限が近い商品を確認できます。一部返金を含め、入金ごとに記録して残額を通貨別に確認できます。購入情報と一緒に領収書や保証期限を管理し、返品や店舗への再連絡のリマインダーを設定できます。アカウントなしで、オフラインでも記録を確認できます。",
+    "features": [
+      "返金待ちの金額を通貨別に表示",
+      "返品期限と店舗への再連絡を通知",
+      "一部返金を記録",
+      "領収書と保証期限を管理",
+      "アカウント不要でオフライン対応"
+    ],
+    "keywords": "返品, 返金, 返品期限, 一部返金, 領収書, 保証期限",
+    "furigana": "リファンダヴィオ ヘンピンヘンキンカンリ"
+  },
+  "nl-NL": {
+    "title": "Refundavio - Retouren en terugbetalingen",
+    "short": "Houd openstaande terugbetalingen, retourtermijnen en opvolging bij winkels bij. Je aankoopgegevens blijven op je apparaat.",
+    "long": "Bekijk welke terugbetalingen nog openstaan en welke artikelen je binnenkort moet terugsturen. Registreer ontvangen bedragen en deelbetalingen en bekijk de saldi per valuta. Bewaar bonnen en garantiedata bij je aankopen. Stel herinneringen in voor retourtermijnen en vervolgcontact met winkels. Je gegevens zijn offline beschikbaar zonder account.",
+    "features": [
+      "Openstaande terugbetalingen per valuta",
+      "Herinneringen voor retouren en opvolging",
+      "Gedeeltelijke terugbetalingen vastleggen",
+      "Bonnen en garantiedata bewaren",
+      "Offline beschikbaar zonder account"
+    ],
+    "keywords": "retouren, terugbetaling, retourtermijn, deelbetaling, bonnen, garantie"
+  },
+  "pl-PL": {
+    "title": "Refundavio - Zwroty i zwroty pieniędzy",
+    "short": "Sprawdzaj oczekiwane zwroty pieniędzy, terminy odesłania zakupów i daty ponownego kontaktu ze sklepem.",
+    "long": "Zobacz, na które zwroty pieniędzy nadal czekasz i które zakupy trzeba wkrótce odesłać. Zapisuj otrzymane kwoty, także zwroty częściowe, i przeglądaj salda według waluty. Zachowuj dowody zakupu oraz daty gwarancji. Ustaw przypomnienia o terminach zwrotu i ponownym kontakcie ze sprzedawcą. Dane są dostępne offline bez konta.",
+    "features": [
+      "Oczekiwane zwroty pieniędzy według waluty",
+      "Przypomnienia o zwrotach i kontakcie ze sklepem",
+      "Rejestrowanie zwrotów częściowych",
+      "Dowody zakupu i daty gwarancji",
+      "Dostęp offline bez konta"
+    ],
+    "keywords": "zwroty, zwrot pieniędzy, termin zwrotu, paragon, gwarancja"
+  },
+  "pt-BR": {
+    "title": "Refundavio - Devoluções e reembolsos",
+    "short": "Acompanhe reembolsos pendentes, prazos de devolução e contatos com lojas. Os registros ficam no seu dispositivo.",
+    "long": "Veja quais reembolsos ainda estão pendentes e quais produtos precisam ser devolvidos em breve. Registre pagamentos e reembolsos parciais, com saldos separados por moeda. Guarde comprovantes e datas de garantia junto às compras. Configure lembretes para devoluções e novos contatos com as lojas. Consulte seus registros sem internet e sem criar uma conta.",
+    "features": [
+      "Saldos de reembolsos por moeda",
+      "Lembretes de devoluções e contatos",
+      "Registro de reembolsos parciais",
+      "Comprovantes e datas de garantia",
+      "Acesso offline sem conta"
+    ],
+    "keywords": "reembolso, devolução, prazo de devolução, comprovante, garantia, compras"
+  },
+  "pt-PT": {
+    "title": "Refundavio - Devoluções e reembolsos",
+    "short": "Acompanhe reembolsos pendentes, prazos de devolução e contactos com lojas. Os registos ficam no seu dispositivo.",
+    "long": "Veja que reembolsos ainda estão pendentes e que artigos precisa de devolver em breve. Registe os pagamentos recebidos, incluindo reembolsos parciais, e consulte os saldos por moeda. Guarde comprovativos e datas de garantia com as compras. Configure lembretes para devoluções e novos contactos com as lojas. Consulte os registos offline sem criar uma conta.",
+    "features": [
+      "Reembolsos pendentes por moeda",
+      "Lembretes de devoluções e contactos",
+      "Registo de reembolsos parciais",
+      "Comprovativos e datas de garantia",
+      "Acesso offline sem conta"
+    ],
+    "keywords": "reembolso, devolução, prazo de devolução, comprovativo, garantia, compras"
+  },
+  "sv-SE": {
+    "title": "Refundavio - Returer och återbetalningar",
+    "short": "Håll koll på väntande återbetalningar, returfrister och uppföljningar med butiker. Uppgifterna sparas på din enhet.",
+    "long": "Se vilka återbetalningar du väntar på och vilka varor som snart behöver skickas tillbaka. Registrera utbetalningar, även delåterbetalningar, och se beloppen per valuta. Spara kvitton och garantidatum med dina köp. Ställ in påminnelser om returer och när det är dags att följa upp med en butik. Dina uppgifter är tillgängliga offline utan konto.",
+    "features": [
+      "Väntande återbetalningar per valuta",
+      "Påminnelser om returer och uppföljningar",
+      "Registrera delåterbetalningar",
+      "Spara kvitton och garantidatum",
+      "Tillgång offline utan konto"
+    ],
+    "keywords": "returer, återbetalning, returfrist, kvitto, garanti, köp"
+  }
+}

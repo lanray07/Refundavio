@@ -1,12 +1,12 @@
 # Refundavio Amazon Appstore draft for Fire tablets
 
-The following values describe the Refundavio 0.2.0 build. Use the existing [English, Spanish and French listing copy](dashboard-milestone.md) for additional localised metadata.
+The following values describe the Refundavio 0.2.1 build. The [marketplace localizations](amazon-marketplace-localizations.json) contain the additional listing copy for the Amazon draft. The [English, Spanish and French listing copy](dashboard-milestone.md) documents the original dashboard milestone.
 
 | Field | Draft value |
 | --- | --- |
 | App title | Refundavio – Returns & Refund Tracker |
 | Package | `app.refundavio` |
-| Version | 0.2.0 (version code 2) |
+| Version | 0.2.1 (version code 3) |
 | Target | Fire OS tablets. Choose supported models after the release binary is uploaded and the console reports compatibility. |
 | Category | Shopping, if available in the console. |
 | Short description | Track refunds, return deadlines and merchant follow-ups without an account. Keep purchase records on your device and set optional reminders for what needs attention. |
@@ -21,7 +21,7 @@ The following values describe the Refundavio 0.2.0 build. Use the existing [Engl
 
 For the privacy questionnaire, use the policy and release binary to verify disclosures. The app stores its ledger on the device and has no internet permission. Optional voice shortcuts and spoken summaries use installed speech services that can use the network. Review how Amazon’s questionnaire classifies those services before choosing answers. [Amazon Appstore privacy labels](https://developer.amazon.com/docs/app-submission/appstore-privacy-labels.html)
 
-The release APK in the workspace is unsigned. Prepare a signed release binary, the store icon and a complete screenshot set before submission. The repository includes one tablet QA capture. Confirm pricing, distribution, ratings and any required support contact in the developer account. [Amazon submission requirements](https://developer.amazon.com/docs/app-submission/submitting-apps-to-amazon-appstore.html) · [Amazon app testing criteria](https://developer.amazon.com/docs/app-testing/test-criteria.html)
+The Gradle release output is unsigned. Sign the Appstore upload using the existing Refundavio release key. The [store screenshots](../screenshots/) show the released Fire tablet interface. Confirm pricing, distribution, ratings and any required support contact in the developer account. [Amazon submission requirements](https://developer.amazon.com/docs/app-submission/submitting-apps-to-amazon-appstore.html) · [Amazon app testing criteria](https://developer.amazon.com/docs/app-testing/test-criteria.html)
 
 ## Reviewer instructions
 

@@ -335,6 +335,7 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
                           erase: () -> Unit, voice: () -> Unit) {
     var confirm by rememberSaveable { mutableStateOf(false) }
     var reminders by rememberSaveable { mutableStateOf(false) }
+    var privacy by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val languageOptions = listOf("", "en", "es", "fr", "ar")
     val languages = listOf(stringResource(R.string.device_language), "English", "Español", "Français", "العربية")
@@ -349,6 +350,7 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.spoken_feedback), Modifier.weight(1f)); Switch(spoken, changeSpoken)
         }
+        Text(stringResource(R.string.spoken_privacy), style = MaterialTheme.typography.bodySmall)
         OutlinedButton(onClick = voice, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.voice_title)) }
         OutlinedButton(onClick = { reminders = true }, modifier = Modifier.fillMaxWidth()) {
             Icon(painter = androidx.compose.ui.res.painterResource(R.drawable.ic_reminder), contentDescription = null, modifier = Modifier.size(18.dp))
@@ -362,8 +364,21 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         }
         HorizontalDivider()
         Text(stringResource(R.string.privacy_hint))
+        OutlinedButton(onClick = { privacy = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.privacy_policy_title))
+        }
         TextButton(onClick = { confirm = true }, enabled = !demo) { Text(stringResource(R.string.erase_data), color = MaterialTheme.colorScheme.error) }
     }
     if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
     if (reminders) ReminderSettingsDialog { reminders = false }
+    if (privacy) AlertDialog(
+        onDismissRequest = { privacy = false },
+        title = { Text(stringResource(R.string.privacy_policy_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.privacy_policy_text))
+            }
+        },
+        confirmButton = { TextButton(onClick = { privacy = false }) { Text(stringResource(R.string.close)) } }
+    )
 }

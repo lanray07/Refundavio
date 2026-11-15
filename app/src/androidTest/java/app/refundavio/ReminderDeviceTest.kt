@@ -8,7 +8,9 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
@@ -29,7 +31,7 @@ class ReminderDeviceTest {
         assumeTrue(arguments.getString("seedReminders") == "true")
         check(context.packageName.endsWith(".qa") || arguments.getString("disposableEmulator") == "true")
         val dao = LedgerDb.open(context).ledger()
-        val delay = arguments.getString("delaySeconds")?.toLongOrNull()?.coerceIn(45, 120) ?: 65
+        val delay = arguments.getString("delaySeconds")?.toLongOrNull()?.coerceIn(45, 300) ?: 65
         val alarm = Instant.now().plusSeconds(delay).truncatedTo(ChronoUnit.SECONDS)
         val local = alarm.atZone(ZoneId.systemDefault())
         val date = local.toLocalDate()
@@ -39,6 +41,14 @@ class ReminderDeviceTest {
         ReminderPreferences.save(context, ReminderSettings(deadlines = true, followUps = true,
             leadDays = setOf(1), time = local.toLocalTime()))
         ReminderScheduler.reconcile(context)
+        // The host can kill the process as soon as instrumentation returns.
+        val persistedSettings = File(context.applicationInfo.dataDir, "shared_prefs/reminders.xml")
+        val savedTime = """name="second_of_day" value="${local.toLocalTime().toSecondOfDay()}""""
+        withTimeout(5_000) {
+            while (!persistedSettings.isFile || !persistedSettings.readText().contains(savedTime)) {
+                delay(50)
+            }
+        }
         val posted = context.getSystemService(NotificationManager::class.java).activeNotifications
         assertTrue("No reminder may post before the preferred time", posted.none { it.id in listOf(1001, 1002) })
         File(context.filesDir, "reminder-test-trigger.txt").writeText(alarm.toString())

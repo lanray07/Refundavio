@@ -1,0 +1,46 @@
+name: Android
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Check translation resources
+        shell: pwsh
+        run: ./scripts/check-localization.ps1
+      - name: Build and test
+        run: bash ./gradlew testDebugUnitTest assembleDebug assembleRelease
+      - name: Start Android tablet emulator
+        run: |
+          sudo chmod 666 /dev/kvm
+          sdkmanager "system-images;android-35;google_apis;x86_64"
+          echo no | avdmanager create avd --name refundavio-qa --package "system-images;android-35;google_apis;x86_64"
+          "$ANDROID_HOME/emulator/emulator" -avd refundavio-qa -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > "$RUNNER_TEMP/refundavio-emu.log" 2>&1 &
+          timeout 240 adb wait-for-device
+          timeout 240 bash -c 'until [[ "$(adb shell getprop sys.boot_completed | tr -d "\r")" == "1" ]]; do sleep 2; done'
+          adb shell input keyevent 82
+          adb shell wm size 800x1280
+          adb shell wm density 160
+      - name: Test saved refund journey and capture dashboard
+        run: |
+          bash ./gradlew connectedDebugAndroidTest
+          adb pull /sdcard/Android/data/app.refundavio/files/dashboard-qa.png app/build/dashboard-qa.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-build
+          path: |
+            app/build/outputs/apk/
+            app/build/test-results/
+            app/build/outputs/androidTest-results/
+            app/build/dashboard-qa.png

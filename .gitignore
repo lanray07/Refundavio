@@ -1,0 +1,12 @@
+.gradle/
+.kotlin/
+local.properties
+.idea/
+**/build/
+*.jks
+*.keystore
+
+# Local build outputs never go into source control.
+deliverables/android/debug/
+deliverables/android/release/
+deliverables/android/build-logs/

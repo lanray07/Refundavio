@@ -17,8 +17,20 @@ The following values describe the Refundavio 0.2.0 build. Use the existing [Engl
 | Support URL | https://github.com/lanray07/Refundavio/issues |
 | Privacy policy URL | https://github.com/lanray07/Refundavio/blob/main/PRIVACY.md |
 | Data deletion URL, if requested | https://github.com/lanray07/Refundavio/blob/main/PRIVACY.md |
-| Reviewer instructions | No account is required. Open **More → Preview sample dashboard** to see example records. To test reminders, exit the sample, add a test purchase with a return deadline or merchant follow-up date, then open **More → Background reminders** and enable the relevant option. Allow notifications if prompted and set the preferred time. Timing can vary with device power management. |
+| Reviewer instructions | [Copy the testing instructions below](#reviewer-instructions). |
 
 For the privacy questionnaire, use the policy and release binary to verify disclosures. The app stores its ledger on the device and has no internet permission. Optional voice shortcuts and spoken summaries use installed speech services that can use the network. Review how Amazon’s questionnaire classifies those services before choosing answers. [Amazon Appstore privacy labels](https://developer.amazon.com/docs/app-submission/appstore-privacy-labels.html)
 
 The release APK in the workspace is unsigned. Prepare a signed release binary, the store icon and a complete screenshot set before submission. The repository includes one tablet QA capture. Confirm pricing, distribution, ratings and any required support contact in the developer account. [Amazon submission requirements](https://developer.amazon.com/docs/app-submission/submitting-apps-to-amazon-appstore.html) · [Amazon app testing criteria](https://developer.amazon.com/docs/app-testing/test-criteria.html)
+
+## Reviewer instructions
+
+```text
+No account or sign-in is required.
+
+Dashboard: Open More > Preview sample dashboard to see outstanding refunds, return deadlines, and merchant follow-ups. For a live test, choose More > Exit sample dashboard.
+
+Reminders: Add a test purchase with an expected refund. Set Return status to Return requested, and set both Return deadline and Next follow-up to today. In More > Background reminders, enable both reminder types, select the due-date option (0 days), and set the reminder time a few minutes ahead. Allow notifications if prompted. Use Home to leave Refundavio. Check for both notices after the scheduled time. Tapping a notice opens the relevant queue. Device power management may delay delivery.
+
+Voice shortcuts are optional. If speech recognition is unavailable, type or select a command.
+```

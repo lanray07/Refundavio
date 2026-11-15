@@ -343,6 +343,7 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         "es" to "Español",
         "fr" to "Français",
         "ar" to "العربية",
+        "hi-IN" to "हिन्दी",
         "de-DE" to "Deutsch",
         "it-IT" to "Italiano",
         "ja-JP" to "日本語",

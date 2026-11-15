@@ -6,6 +6,8 @@ Deadline queues and refund tracking are already offered by [ReturnTracker](https
 
 The brief proposes an optional one-time Amazon Premium unlock. Keep deadlines, existing records, basic balances and purchase history available without payment. Test price and limits with users before introducing a paywall. No Amazon purchasing or real-money entitlements are active in this milestone.
 
+Amazon Appstore distribution should target Fire tablets. [Amazon ended its Appstore support for non-Fire Android mobile devices](https://developer.amazon.com/apps-and-games/blogs/2025/02/upcoming-changes-to-amazon-appstore-for-android-devices-and-coins-program). The native APK can be tested on compatible Android devices, but a separate distribution decision is required for those devices.
+
 ## Privacy and security
 
 The APK has no internet permission or embedded service keys. Records use the app-private Room database, with Android backup disabled. The Android document picker grants read access only to the selected attachment. Removing an attachment from a record does not delete the provider’s file. Speech is optional and delegated to the installed Android service. Drafts are generated locally and copied only by explicit user action. Database deletion of all purchase records requires confirmation. No account, analytics, merchant integration or automatic messaging is configured.

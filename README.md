@@ -10,6 +10,24 @@ Refundavio is a native Android return and refund tracker designed for phones and
 | --- | --- | --- |
 | ![Refundavio dashboard showing outstanding GBP and EUR refunds, payments received, upcoming return deadlines, and merchant follow-ups](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-01-shopping-refund-tracker.png) | ![Returns list showing which purchases are awaiting dispatch, partially refunded, or fully refunded](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-02-return-deadlines.png) | ![Warranty tracker showing an example purchase and its warranty expiry date](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-03-warranty-expiry-tracker.png) |
 
+### English (Australia)
+
+| Refund tracker | Return deadlines | Warranty expiry |
+| --- | --- | --- |
+| ![Refundavio dashboard with outstanding refunds by currency, received payments, return deadlines and retailer follow-ups.](deliverables/store-assets/screenshots/refundavio-en-au-fire-tablet-01-shopping-refund-tracker.png) | ![Returns list showing purchases awaiting dispatch, partially refunded purchases and completed refunds.](deliverables/store-assets/screenshots/refundavio-en-au-fire-tablet-02-retail-return-deadlines.png) | ![Warranty tracker showing a sample purchase and the date its warranty expires.](deliverables/store-assets/screenshots/refundavio-en-au-fire-tablet-03-receipt-warranty-tracker.png) |
+
+### English (UK)
+
+| Refund tracker | Return deadlines | Warranty expiry |
+| --- | --- | --- |
+| ![Refundavio dashboard showing outstanding pound and euro refunds, payments received and shops to follow up with.](deliverables/store-assets/screenshots/refundavio-en-gb-fire-tablet-01-outstanding-refund-tracker.png) | ![Refundavio returns list with sample parcels awaiting dispatch and purchases with part or full refunds.](deliverables/store-assets/screenshots/refundavio-en-gb-fire-tablet-02-parcel-return-deadlines.png) | ![Warranty tracker displaying a sample item and its warranty expiry date.](deliverables/store-assets/screenshots/refundavio-en-gb-fire-tablet-03-warranty-expiry-tracker.png) |
+
+### English (India)
+
+| Refund tracker | Return deadlines | Warranty expiry |
+| --- | --- | --- |
+| ![Refundavio dashboard with refund balances by currency, received refunds, upcoming return deadlines and seller follow-ups.](deliverables/store-assets/screenshots/refundavio-en-in-fire-tablet-01-pending-refund-tracker.png) | ![Returns list showing orders awaiting dispatch and the status of partial and completed refunds.](deliverables/store-assets/screenshots/refundavio-en-in-fire-tablet-02-order-return-deadlines.png) | ![Warranty tracker showing one sample purchase and its warranty expiry date.](deliverables/store-assets/screenshots/refundavio-en-in-fire-tablet-03-purchase-warranty-tracker.png) |
+
 ### Español
 
 | Seguimiento de reembolsos | Plazos de devolución | Vencimiento de garantías |

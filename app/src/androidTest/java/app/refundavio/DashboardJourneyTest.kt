@@ -1,12 +1,12 @@
 package app.refundavio
 
 import android.content.Context
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
@@ -74,7 +74,7 @@ class DashboardJourneyTest {
         ui.onAllNodesWithText(context.getString(R.string.deadlines)).onFirst().assertIsDisplayed()
         ui.onAllNodesWithText(context.getString(R.string.followups)).onFirst().assertIsDisplayed()
         ui.waitForIdle()
-        val screenshot = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
+        val screenshot = ui.onRoot().captureToImage().asAndroidBitmap()
         File(context.filesDir, "dashboard-qa.png").outputStream().use {
             check(screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it))
         }

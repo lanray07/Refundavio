@@ -9,13 +9,14 @@ Source revision: `de7015d`. Android 0.1.0, package `app.refundavio`.
 | Financial and urgency tests | PASS | 5 passed; 0 failed or skipped. Covers split payments, separate currency totals, closed and cancelled cases, corrections, deadline queue eligibility, locale number parsing and very large balances. |
 | Android lint | PASS | 0 errors, 15 warnings, 2 hints. Warnings include dependency updates, Android API targeting and Kotlin idioms. |
 | String, placeholder and plural parity | PASS | 126 strings and 2 plural groups in each bundled locale (English, Spanish, French, Arabic). |
+| Android 15 tablet emulator | PASS | 2 instrumented tests on an 800 × 1280 emulator: saved a purchase, recorded a partial refund and reopened its persisted balance; verified the dashboard’s balance, deadline and follow-up sections with fictional data. |
 | Physical Fire tablet compatibility | NOT TESTED | No Fire tablet was attached. Amazon’s [model/API reference](https://www.developer.amazon.com/docs/device-specs/ft-identify-tablet-devices.html) is a targeting guide, not evidence of runtime compatibility. |
 | Physical-device speech recognition and text to speech | NOT TESTED | Speech depends on the installed engine and the requested locale. |
 | Amazon purchasing, signing for distribution and submission | BLOCKED | Amazon product integration, sandbox test access, release signing, final store assets and approval remain required. |
 
 Local build command: `gradlew.bat --offline --max-workers 2 testDebugUnitTest assembleDebug assembleRelease assembleDebugAndroidTest`.
 
-The Windows emulator exited before reaching Android’s home screen. The [hosted Android run](https://github.com/lanray07/Refundavio/actions/runs/43710605543) covers runtime testing separately.
+The Windows emulator exited before reaching Android’s home screen. Both on-device tests passed in the [hosted Android run](https://github.com/lanray07/Refundavio/actions/runs/43711202068).
 
 APK checksums (SHA-256):
 

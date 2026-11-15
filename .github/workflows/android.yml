@@ -36,7 +36,12 @@ jobs:
             adb shell wm size 800x1280
             adb shell wm density 160
             bash ./gradlew connectedDebugAndroidTest
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+            adb shell am instrument -w -e class 'app.refundavio.DashboardJourneyTest#showActionQueuesAndBalancesInDemo' app.refundavio.test/androidx.test.runner.AndroidJUnitRunner | tee app/build/capture-test.txt
+            grep -F 'OK (1 test)' app/build/capture-test.txt
             adb exec-out run-as app.refundavio cat files/dashboard-qa.png > app/build/dashboard-qa.png
+            python3 -c 'from pathlib import Path; assert Path("app/build/dashboard-qa.png").read_bytes().startswith(bytes.fromhex("89504e470d0a1a0a"))'
       - uses: actions/upload-artifact@v4
         if: always()
         with:

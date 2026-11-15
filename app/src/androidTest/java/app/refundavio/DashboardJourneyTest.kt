@@ -1,6 +1,7 @@
 package app.refundavio
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -9,11 +10,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.time.LocalDate
 import java.io.File
+import java.util.Locale
 
 @RunWith(AndroidJUnit4::class)
 class DashboardJourneyTest {
@@ -77,6 +80,26 @@ class DashboardJourneyTest {
         val screenshot = ui.onRoot().captureToImage().asAndroidBitmap()
         File(context.filesDir, "dashboard-qa.png").outputStream().use {
             check(screenshot.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it))
+        }
+    }
+
+    @Test fun eastAsianResourcesFollowDeviceRegionAndExplicitScript() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val warrantiesByLocale = mapOf(
+            "ko-KR" to "보증",
+            "zh-CN" to "保修",
+            "zh-SG" to "保修",
+            "zh-Hans-CN" to "保修",
+            "zh-TW" to "保固",
+            "zh-HK" to "保固",
+            "zh-Hant-TW" to "保固",
+        )
+        for ((tag, expected) in warrantiesByLocale) {
+            val config = Configuration(context.resources.configuration).apply {
+                setLocale(Locale.forLanguageTag(tag))
+            }
+            val localized = context.createConfigurationContext(config)
+            assertEquals(tag, expected, localized.getString(R.string.warranties))
         }
     }
 

@@ -16,7 +16,7 @@ Source revision: `de7015d`. Android 0.1.0, package `app.refundavio`.
 
 Local build command: `gradlew.bat --offline --max-workers 2 testDebugUnitTest assembleDebug assembleRelease assembleDebugAndroidTest`.
 
-The Windows emulator exited before reaching Android’s home screen. Both on-device tests passed in the [hosted Android run](https://github.com/lanray07/Refundavio/actions/runs/43711202068).
+The Windows emulator exited before reaching Android’s home screen. Both on-device tests passed in the [hosted Android run](https://github.com/lanray07/Refundavio/actions/runs/43712053397). The [English tablet preview](screenshots/dashboard-tablet-en-US.png) is a captured app screen with fictional records, visually checked against the tested dashboard. It is a QA capture, not a finished store asset.
 
 APK checksums (SHA-256):
 

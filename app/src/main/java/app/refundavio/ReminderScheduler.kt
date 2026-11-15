@@ -162,6 +162,7 @@ internal object ReminderScheduler {
         } else {
             val pending = existing ?: PendingIntent.getBroadcast(context, 0, broadcast, PendingIntent.FLAG_IMMUTABLE)
             alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at.toEpochMilli(), pending)
+            debug(context, "Scheduled background alarm")
         }
     }
 
@@ -185,10 +186,16 @@ internal object ReminderScheduler {
             .build()
         return try {
             context.getSystemService(NotificationManager::class.java).notify(kind.notificationId, notification)
+            debug(context, "Posted ${kind.name}")
             true
         } catch (_: SecurityException) {
             false // Notification permission was revoked between the check and posting.
         }
+    }
+
+    internal fun debug(context: Context, message: String) {
+        if (context.applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE != 0)
+            Log.d("RefundavioReminders", message)
     }
 }
 
@@ -201,6 +208,7 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action !in setOf(ALARM_ACTION, Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED,
                 Intent.ACTION_TIME_CHANGED, Intent.ACTION_TIMEZONE_CHANGED)) return
+        ReminderScheduler.debug(context, "Received ${intent.action}")
         val result = goAsync()
         ReminderScheduler.request(context) { result.finish() }
     }

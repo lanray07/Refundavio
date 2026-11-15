@@ -20,6 +20,13 @@ function Android {
 }
 
 function Active-ReminderIds {
+    $keys = & $Adb @device shell cmd notification list
+    if ($LASTEXITCODE -eq 0 -and !($keys -match 'Unknown command|^usage:')) {
+        foreach ($key in $keys) {
+            if ($key -match ('^\d+\|' + [regex]::Escape($Package) + '\|(1001|1002)\|')) { [int]$Matches[1] }
+        }
+        return
+    }
     $active = $false
     foreach ($line in (Android shell dumpsys notification)) {
         if ($line -match '^\s*Notification List:\s*$') { $active = $true; continue }
@@ -33,6 +40,11 @@ function Active-ReminderIds {
 
 if ($DisposableEmulator -and (Android shell getprop ro.kernel.qemu | Out-String).Trim() -ne '1') {
     throw 'Disposable mode requires an Android emulator.'
+}
+if ($DisposableEmulator) {
+    # Keep the test environment interactive so battery policies do not obscure closed-app delivery.
+    Android shell svc power stayon true
+    Android shell input keyevent KEYCODE_WAKEUP
 }
 $sdk = [int](Android shell getprop ro.build.version.sdk)
 if ($sdk -ge 33) {
@@ -64,6 +76,9 @@ $deviceNow = [DateTimeOffset]::FromUnixTimeSeconds([long](Android shell date +%s
 if ($deviceNow -ge $trigger) { throw 'The app did not close before the alarm was due.' }
 if (@(Active-ReminderIds).Count -ne 0) { throw 'A notification posted before its scheduled time.' }
 Write-Output "App sent to Home and process confirmed gone before alarm time $($trigger.ToString('o'))."
+if ($DisposableEmulator) {
+    Android shell dumpsys alarm | Select-String 'app\.refundavio\.REMINDER_ALARM' -Context 0,2 | Out-String | Write-Output
+}
 
 $watch = [Diagnostics.Stopwatch]::StartNew()
 do {
@@ -76,4 +91,9 @@ do {
     }
     Start-Sleep -Seconds 3
 } while ($watch.Elapsed.TotalSeconds -lt $TimeoutSeconds)
+if ($DisposableEmulator) {
+    Android shell dumpsys alarm | Select-String 'app\.refundavio\.REMINDER_ALARM' -Context 0,3 | Out-String | Write-Output
+    Android shell cmd notification list | Where-Object { $_ -match [regex]::Escape($Package) } | Write-Output
+    Android shell logcat -d -s RefundavioReminders:D | Write-Output
+}
 throw "Both reminder notifications were not observed on the closed app within $TimeoutSeconds seconds (last IDs: $ids)."

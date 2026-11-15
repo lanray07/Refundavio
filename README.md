@@ -22,6 +22,30 @@ Refundavio is a native Android return and refund tracker designed for phones and
 | --- | --- | --- |
 | ![Tableau de bord Refundavio avec les remboursements en attente par devise, les dates limites de retour et les commerçants à relancer](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-01-suivi-remboursements.png) | ![Liste des retours avec les achats à expédier et les remboursements partiels ou complets](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-02-dates-limites-retour.png) | ![Écran des garanties avec un exemple d’achat et sa date de fin de garantie](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-03-dates-expiration-garanties.png) |
 
+### Nederlands
+
+| Terugbetalingen | Retouren | Garanties |
+| --- | --- | --- |
+| ![Voorbeeldoverzicht van Refundavio met openstaande bedragen in euro en pond, ontvangen terugbetalingen, retourtermijnen en vervolgcontact met winkels.](deliverables/store-assets/screenshots/refundavio-nl-nl-fire-tablet-01-terugbetalingen-volgen.png) | ![Nederlandse retourlijst met artikelen die nog moeten worden verzonden en aankopen die gedeeltelijk of volledig zijn terugbetaald.](deliverables/store-assets/screenshots/refundavio-nl-nl-fire-tablet-02-retourtermijnen.png) | ![Nederlandse garantiepagina met een voorbeeldscanner en de datum waarop de garantie afloopt.](deliverables/store-assets/screenshots/refundavio-nl-nl-fire-tablet-03-garantiedata.png) |
+
+### Polski
+
+| Zwroty pieniędzy | Zwroty | Gwarancje |
+| --- | --- | --- |
+| ![Przykładowy polski pulpit Refundavio pokazuje oczekiwane i otrzymane zwroty pieniędzy, terminy zwrotu i ponowny kontakt ze sklepami.](deliverables/store-assets/screenshots/refundavio-pl-pl-fire-tablet-01-sledzenie-zwrotow-pieniedzy.png) | ![Polska lista zwrotów pokazuje zakupy czekające na wysyłkę oraz zakupy z częściowym lub pełnym zwrotem pieniędzy.](deliverables/store-assets/screenshots/refundavio-pl-pl-fire-tablet-02-terminy-zwrotow.png) | ![Polski ekran gwarancji z przykładowym skanerem i datą wygaśnięcia gwarancji.](deliverables/store-assets/screenshots/refundavio-pl-pl-fire-tablet-03-terminy-gwarancji.png) |
+
+### Português (Portugal)
+
+| Reembolsos | Devoluções | Garantias |
+| --- | --- | --- |
+| ![Painel de exemplo da Refundavio em português europeu com reembolsos pendentes e recebidos, prazos de devolução e contactos de seguimento.](deliverables/store-assets/screenshots/refundavio-pt-pt-fire-tablet-01-reembolsos-pendentes.png) | ![Lista de devoluções em português europeu com artigos a aguardar envio e compras total ou parcialmente reembolsadas.](deliverables/store-assets/screenshots/refundavio-pt-pt-fire-tablet-02-prazos-de-devolucao.png) | ![Ecrã de garantias em português europeu com um digitalizador de exemplo e a data em que termina a garantia.](deliverables/store-assets/screenshots/refundavio-pt-pt-fire-tablet-03-datas-de-garantia.png) |
+
+### Svenska
+
+| Återbetalningar | Returer | Garantier |
+| --- | --- | --- |
+| ![Refundavios svenska exempelöversikt visar väntande och mottagna återbetalningar, returfrister och uppföljningar med butiker.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-01-vantande-aterbetalningar.png) | ![Svensk returlista med varor som väntar på att skickas samt delvis och helt återbetalda köp.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-02-returfrister.png) | ![Den svenska garantivyn visar en exempelskanner och datumet då garantin går ut.](deliverables/store-assets/screenshots/refundavio-sv-se-fire-tablet-03-garantidatum.png) |
+
 ## Run and build
 
 Install JDK 17 and Android SDK Platform 35 with Build Tools 35.0.0. Set `ANDROID_HOME` to the SDK directory or set `sdk.dir` in an untracked `local.properties`. The first build requires access to Google Maven and Maven Central. No credentials, backend, or `.env` file are required.

@@ -337,14 +337,23 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
     var reminders by rememberSaveable { mutableStateOf(false) }
     var privacy by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val languageOptions = listOf("", "en", "es", "fr", "ar")
-    val languages = listOf(stringResource(R.string.device_language), "English", "Español", "Français", "العربية")
+    val languageOptions = listOf(
+        "" to stringResource(R.string.device_language),
+        "en" to "English",
+        "es" to "Español",
+        "fr" to "Français",
+        "ar" to "العربية",
+        "de-DE" to "Deutsch",
+        "it-IT" to "Italiano",
+        "ja-JP" to "日本語",
+        "pt-BR" to "Português (Brasil)",
+    )
     val localPrefs = remember { context.getSharedPreferences("preferences", 0) }
-    val index = languageOptions.indexOf(localPrefs.getString("locale", "")).coerceAtLeast(0)
+    val index = languageOptions.indexOfFirst { it.first == localPrefs.getString("locale", "") }.coerceAtLeast(0)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         PageTitle(stringResource(R.string.more), stringResource(R.string.settings_hint))
-        SelectOption(stringResource(R.string.language), index, languages) { indexSelected ->
-            localPrefs.edit().putString("locale", languageOptions[indexSelected]).apply()
+        SelectOption(stringResource(R.string.language), index, languageOptions.map { it.second }) { indexSelected ->
+            localPrefs.edit().putString("locale", languageOptions[indexSelected].first).apply()
             (context as? MainActivity)?.recreate()
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {

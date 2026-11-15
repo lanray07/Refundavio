@@ -18,7 +18,7 @@ function Map($elements) {
 $base = Read-Resources 'values'
 $baseStrings = Map $base.string
 $basePlurals = Map $base.plurals
-foreach ($folder in @('values-es', 'values-fr', 'values-ar')) {
+foreach ($folder in @('values-es', 'values-fr', 'values-ar', 'values-de', 'values-it', 'values-ja', 'values-pt-rBR')) {
     $current = Read-Resources $folder
     $strings = Map $current.string
     $plurals = Map $current.plurals

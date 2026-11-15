@@ -36,7 +36,7 @@ internal fun localizedAppContext(base: Context): Context {
     if (tag.isEmpty()) return base
     val requested = Locale.forLanguageTag(tag)
     val device = base.resources.configuration.locales[0]
-    val locale = if (device.language == requested.language) device else requested
+    val locale = if (requested.country.isEmpty() && device.language == requested.language) device else requested
     val config = Configuration(base.resources.configuration).apply { setLocale(locale) }
     return base.createConfigurationContext(config)
 }

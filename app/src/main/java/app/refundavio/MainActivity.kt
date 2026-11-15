@@ -1,5 +1,7 @@
 package app.refundavio
 
+import android.content.Context
+
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
@@ -128,7 +130,7 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
     var demo by rememberSaveable { mutableStateOf(false) }
     var today by remember { mutableStateOf(LocalDate.now()) }
     LaunchedEffect(Unit) { while (true) { today = LocalDate.now(); delay(15000) } }
-    val samples = remember(today) { demoCases(today) }
+    val samples = remember(today, locale) { demoCases(context, today) }
     val cases = if (demo) samples else data.orEmpty()
     val snapshot = remember(cases, today) { Dashboard.from(cases, today) }
     val detail = cases.firstOrNull { it.record.id == recordId }
@@ -508,18 +510,18 @@ private fun urgencyLabel(date: LocalDate, today: LocalDate, returnDeadline: Bool
     }
 }
 
-private fun demoCases(now: LocalDate): List<CaseSnapshot> {
-    fun sample(id: Long, item: String, merchant: String, expected: Long, stage: Stage,
+private fun demoCases(context: Context, now: LocalDate): List<CaseSnapshot> {
+    fun sample(id: Long, item: Int, merchant: String, expected: Long, stage: Stage,
                deadline: Long? = null, follow: Long? = null, received: Long? = null, currency: String = "GBP") =
-        CaseSnapshot(RecoveryCase(id, item, merchant, currency, expected, stage, deadline?.let(now::plusDays), follow?.let(now::plusDays)),
+        CaseSnapshot(RecoveryCase(id, context.getString(item), merchant, currency, expected, stage, deadline?.let(now::plusDays), follow?.let(now::plusDays)),
             received?.let { listOf(Receipt(id, it, now.minusDays(2))) }.orEmpty())
     return listOf(
-        sample(1, "Linen weekend bag", "North & Coast", 4800, Stage.AWAITING_DISPATCH, 0),
-        sample(2, "Studio headphones", "Arc Workshop", 12900, Stage.PROCESSING, follow = -2, received = 3000),
-        sample(3, "Trail running shoes", "Field Goods", 8500, Stage.REQUESTED, 3, 0),
-        sample(4, "Desk lamp", "Juniper House", 4200, Stage.MERCHANT_RECEIVED, follow = 4),
-        sample(5, "Ceramic travel mug", "West & Clay", 2400, Stage.PROCESSING, received = 2400),
-        sample(6, "Cycling gloves", "Velodrome Atelier", 3850, Stage.REFUND_APPROVED, follow = 8, currency = "EUR"),
-        sample(7, "Compact scanner", "Paper Loft", 0, Stage.NOT_REQUESTED).let { it.copy(record = it.record.copy(warranty = now.plusDays(24))) }
+        sample(1, R.string.sample_bag, "North & Coast", 4800, Stage.AWAITING_DISPATCH, 0),
+        sample(2, R.string.sample_headphones, "Arc Workshop", 12900, Stage.PROCESSING, follow = -2, received = 3000),
+        sample(3, R.string.sample_shoes, "Field Goods", 8500, Stage.REQUESTED, 3, 0),
+        sample(4, R.string.sample_lamp, "Juniper House", 4200, Stage.MERCHANT_RECEIVED, follow = 4),
+        sample(5, R.string.sample_mug, "West & Clay", 2400, Stage.PROCESSING, received = 2400),
+        sample(6, R.string.sample_gloves, "Velodrome Atelier", 3850, Stage.REFUND_APPROVED, follow = 8, currency = "EUR"),
+        sample(7, R.string.sample_scanner, "Paper Loft", 0, Stage.NOT_REQUESTED).let { it.copy(record = it.record.copy(warranty = now.plusDays(24))) }
     )
 }

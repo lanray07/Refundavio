@@ -20,27 +20,23 @@ jobs:
         run: ./scripts/check-localization.ps1
       - name: Build and test
         run: bash ./gradlew testDebugUnitTest assembleDebug assembleRelease
-      - name: Start Android tablet emulator
+      - name: Enable KVM for the Android emulator
         run: |
-          sudo chmod 666 /dev/kvm
-          export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
-          sdkmanager "emulator" "system-images;android-35;google_apis;x86_64"
-          echo no | avdmanager create avd --name refundavio-qa --package "system-images;android-35;google_apis;x86_64"
-          "$ANDROID_HOME/emulator/emulator" -avd refundavio-qa -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect > "$RUNNER_TEMP/refundavio-emu.log" 2>&1 &
-          timeout 240 adb wait-for-device
-          timeout 240 bash -c 'until [[ "$(adb shell getprop sys.boot_completed | tr -d "\r")" == "1" ]]; do sleep 2; done'
-          adb shell input keyevent 82
-          adb shell wm size 800x1280
-          adb shell wm density 160
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
       - name: Test saved refund journey and capture dashboard
-        run: bash ./gradlew connectedDebugAndroidTest
-      - name: Collect dashboard screenshot
-        if: always()
-        run: |
-          adb="$ANDROID_HOME/platform-tools/adb"
-          if "$adb" shell run-as app.refundavio test -s files/dashboard-qa.png; then
-            "$adb" exec-out run-as app.refundavio cat files/dashboard-qa.png > app/build/dashboard-qa.png
-          fi
+        uses: ReactiveCircus/android-emulator-runner@c9c93e6ba9c4194322e114c40970d5983d9a07cc # v2.38.0
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          emulator-boot-timeout: 180
+          script: |
+            adb shell wm size 800x1280
+            adb shell wm density 160
+            bash ./gradlew connectedDebugAndroidTest
+            adb exec-out run-as app.refundavio cat files/dashboard-qa.png > app/build/dashboard-qa.png
       - uses: actions/upload-artifact@v4
         if: always()
         with:

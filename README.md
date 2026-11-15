@@ -2,6 +2,26 @@
 
 Refundavio is a native Android return and refund tracker designed for phones and Amazon Fire tablets. The first milestone focuses on the Refund Recovery Dashboard: how much is outstanding, what needs to go back soon, and which merchant needs a follow-up.
 
+## Fire tablet screenshots
+
+### English
+
+| Refund tracker | Return deadlines | Warranty expiry |
+| --- | --- | --- |
+| ![Refundavio dashboard showing outstanding GBP and EUR refunds, payments received, upcoming return deadlines, and merchant follow-ups](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-01-shopping-refund-tracker.png) | ![Returns list showing which purchases are awaiting dispatch, partially refunded, or fully refunded](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-02-return-deadlines.png) | ![Warranty tracker showing an example purchase and its warranty expiry date](deliverables/store-assets/screenshots/refundavio-en-us-fire-tablet-03-warranty-expiry-tracker.png) |
+
+### Español
+
+| Seguimiento de reembolsos | Plazos de devolución | Vencimiento de garantías |
+| --- | --- | --- |
+| ![Panel de Refundavio con reembolsos pendientes por moneda, plazos de devolución y comercios a los que volver a contactar](deliverables/store-assets/screenshots/refundavio-es-es-fire-tablet-01-seguimiento-reembolsos.png) | ![Lista de devoluciones con compras pendientes de envío y reembolsos parciales o completos](deliverables/store-assets/screenshots/refundavio-es-es-fire-tablet-02-plazos-devolucion.png) | ![Pantalla de garantías con una compra de ejemplo y la fecha de vencimiento de su garantía](deliverables/store-assets/screenshots/refundavio-es-es-fire-tablet-03-vencimiento-garantias.png) |
+
+### Français
+
+| Suivi des remboursements | Dates limites de retour | Dates de fin de garantie |
+| --- | --- | --- |
+| ![Tableau de bord Refundavio avec les remboursements en attente par devise, les dates limites de retour et les commerçants à relancer](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-01-suivi-remboursements.png) | ![Liste des retours avec les achats à expédier et les remboursements partiels ou complets](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-02-dates-limites-retour.png) | ![Écran des garanties avec un exemple d’achat et sa date de fin de garantie](deliverables/store-assets/screenshots/refundavio-fr-fr-fire-tablet-03-dates-expiration-garanties.png) |
+
 ## Run and build
 
 Install JDK 17 and Android SDK Platform 35 with Build Tools 35.0.0. Set `ANDROID_HOME` to the SDK directory or set `sdk.dir` in an untracked `local.properties`. The first build requires access to Google Maven and Maven Central. No credentials, backend, or `.env` file are required.

@@ -45,3 +45,16 @@ foreach ($folder in @('values-es', 'values-fr', 'values-ar', 'values-hi', 'value
     }
     Write-Output "$folder : $($strings.Count) strings, $($plurals.Count) plural groups"
 }
+
+foreach ($folder in @('values-fr-rCA', 'values-b+es+419')) {
+    $current = Read-Resources $folder
+    $strings = Map $current.string
+    if ($strings.Count -eq 0 -or $null -ne $current.plurals) { throw "$folder invalid regional override set" }
+    foreach ($key in $strings.Keys) {
+        if (!$baseStrings.ContainsKey($key) -or [string]::IsNullOrWhiteSpace($strings[$key].InnerText) -or
+            (Placeholders $strings[$key].InnerText) -ne (Placeholders $baseStrings[$key].InnerText)) {
+            throw "$folder invalid regional override: $key"
+        }
+    }
+    Write-Output "$folder : $($strings.Count) regional overrides"
+}

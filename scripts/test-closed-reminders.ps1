@@ -3,6 +3,7 @@ param(
     [string]$Serial,
     [string]$Package = 'app.refundavio.qa',
     [switch]$DisposableEmulator,
+    [switch]$IncludeWarranty,
     [int]$TimeoutSeconds = 210
 )
 $ErrorActionPreference = 'Stop'
@@ -12,6 +13,8 @@ if ($Package -ne 'app.refundavio.qa' -and !$DisposableEmulator) {
 }
 $device = @()
 if ($Serial) { $device = @('-s', $Serial) }
+$expectedIds = if ($IncludeWarranty) { @(1001, 1002, 1003) } else { @(1001, 1002) }
+$idPattern = '(' + ($expectedIds -join '|') + ')'
 
 function Android {
     $output = & $Adb @device @args
@@ -23,7 +26,7 @@ function Active-ReminderIds {
     $keys = & $Adb @device shell cmd notification list
     if ($LASTEXITCODE -eq 0 -and !($keys -match 'Unknown command|^usage:')) {
         foreach ($key in $keys) {
-            if ($key -match ('^\d+\|' + [regex]::Escape($Package) + '\|(1001|1002)\|')) { [int]$Matches[1] }
+            if ($key -match ('^\d+\|' + [regex]::Escape($Package) + '\|' + $idPattern + '\|')) { [int]$Matches[1] }
         }
         return
     }
@@ -32,7 +35,7 @@ function Active-ReminderIds {
         if ($line -match '^\s*Notification List:\s*$') { $active = $true; continue }
         if (!$active) { continue }
         if ($line -match '^\s*(?:Enqueued Notification List|Snoozed notifications|Ranking Config|Notification listener)\b') { break }
-        if ($line -match ('NotificationRecord\(.*\bpkg=' + [regex]::Escape($Package) + '\s+.*\bid=(1001|1002)\b')) {
+        if ($line -match ('NotificationRecord\(.*\bpkg=' + [regex]::Escape($Package) + '\s+.*\bid=' + $idPattern + '\b')) {
             [int]$Matches[1]
         }
     }
@@ -54,6 +57,7 @@ $argsForFixture = @('shell', 'am', 'instrument', '-w', '-e', 'class',
     'app.refundavio.ReminderDeviceTest#seedAlarmForClosedAppTest',
     '-e', 'seedReminders', 'true', '-e', 'delaySeconds', '65')
 if ($DisposableEmulator) { $argsForFixture += @('-e', 'disposableEmulator', 'true') }
+if ($IncludeWarranty) { $argsForFixture += @('-e', 'includeWarranty', 'true') }
 $argsForFixture += "$Package.test/androidx.test.runner.AndroidJUnitRunner"
 $seed = Android @argsForFixture
 $seed | Write-Output
@@ -83,10 +87,10 @@ if ($DisposableEmulator) {
 $watch = [Diagnostics.Stopwatch]::StartNew()
 do {
     $ids = @(Active-ReminderIds)
-    if (1001 -in $ids -and 1002 -in $ids) {
+    if (!($expectedIds | Where-Object { $_ -notin $ids })) {
         $received = [DateTimeOffset]::FromUnixTimeSeconds([long](Android shell date +%s))
         if ($received -lt $trigger) { throw 'The notifications appeared early.' }
-        Write-Output "PASS: Android posted both notifications without reopening the app at $($received.ToString('o'))."
+        Write-Output "PASS: Android posted reminder IDs $($expectedIds -join ', ') without reopening the app at $($received.ToString('o'))."
         exit 0
     }
     Start-Sleep -Seconds 3
@@ -96,4 +100,4 @@ if ($DisposableEmulator) {
     Android shell cmd notification list | Where-Object { $_ -match [regex]::Escape($Package) } | Write-Output
     Android shell logcat -d -s RefundavioReminders:D | Write-Output
 }
-throw "Both reminder notifications were not observed on the closed app within $TimeoutSeconds seconds (last IDs: $ids)."
+throw "Expected reminder IDs $($expectedIds -join ', ') within $TimeoutSeconds seconds (last IDs: $ids)."

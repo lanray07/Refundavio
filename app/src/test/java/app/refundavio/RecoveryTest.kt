@@ -75,4 +75,18 @@ class RecoveryTest {
         assertEquals(mapOf("GBP" to BigDecimal(100)), dashboard.received)
         assertTrue(dashboard.recent.isEmpty() && dashboard.returns.isEmpty() && dashboard.warranties.isEmpty())
     }
+
+    @Test fun orderGroupingKeepsItemsIndependentAndSeparatesMerchants() {
+        val first = record(1, 500, payments = longArrayOf(200)).let {
+            it.copy(record = it.record.copy(merchant = "Shop A", orderReference = "A12"))
+        }
+        val sameOrder = record(2, 1250).let {
+            it.copy(record = it.record.copy(merchant = "shop a", orderReference = "A12"))
+        }
+        val otherMerchant = record(3, 2500).let { it.copy(record = it.record.copy(orderReference = "A12")) }
+        val order = casesInOrder(first.record, listOf(first, sameOrder, otherMerchant))
+        assertEquals(listOf(1L, 2L), order.map { it.record.id })
+        assertEquals(listOf(BigDecimal(300), BigDecimal(1250)), order.map { it.outstanding })
+        assertTrue(casesInOrder(first.record.copy(orderReference = " "), order).isEmpty())
+    }
 }

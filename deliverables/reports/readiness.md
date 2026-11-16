@@ -14,7 +14,7 @@ The APK has no internet permission or embedded service keys. Records use the app
 
 ## Master prompt review, 16 November 2026
 
-The Amazon draft contains signed **0.2.6**, targets 12 Fire tablet models, and is set to all available countries and regions. The review page displays the reviewer instructions and an unchecked export certification. Chinese, Hindi and Korean are now selected under Language Support. Amazon's Language Support selector has no entries for Indonesian, Swedish or Turkish. The in-app picker includes those languages. Storefront localization and distribution are configured separately. [Amazon international distribution](https://developer.amazon.com/docs/app-submission/distribute-your-app-internationally.html)
+At the initial review, the Amazon draft contained signed **0.2.6**, targeted 12 Fire tablet models, and was set to all available countries and regions. Chinese, Hindi and Korean were selected under Language Support. Amazon's Language Support selector has no entries for Indonesian, Swedish or Turkish. The in-app picker includes those languages. Storefront localization and distribution are configured separately. [Amazon international distribution](https://developer.amazon.com/docs/app-submission/distribute-your-app-internationally.html)
 
 The **0.2.7** local candidate adds reports and purchase archiving. It needs final review before replacing the draft binary. Reports collect ledger information into a single file with sections for purchases, refund recovery, confirmed refunds, pending balances, return deadlines, follow-ups, contact history and warranties. The app requires confirmation and a destination selected through the system file picker. Reports omit attachment URIs and files. Archive from purchase details and restore under **Purchases → Show → Archived purchases**. Archived records and confirmed refunds remain available in history and reports. Archiving pauses alerts and leaves purchases with outstanding balances active.
 
@@ -29,7 +29,7 @@ Run `gradlew.bat --offline --max-workers 2 -PrefundavioQa testDebugUnitTest asse
 | Recovery dashboard and local ledger | PASS | Existing decimal-safe totals, partial payments, currency-separated balances, return deadlines, follow-up queues and warranty view. [Verification](verification.md) |
 | Background reminders | PASS | Return and merchant follow-up alerts were exercised with the app closed, screen off and after reboot on the physical Fire tablet. [Reminder report](reminders.md) |
 | Candidate report generation and database migration | PASS | All 13 unit tests passed. On Fire tablet `KFTRWI` (Android API 28, 1920 × 1200 landscape), two instrumentation tests verified CSV and text report amounts, opening a multipage PDF, upgrade from the version-one schema, and archive and restore effects on reminder eligibility. Lint reported zero errors, 16 warnings and two hints. |
-| Full export journey on the Fire tablet | BLOCKED | The Korean report confirmation opened the device's Downloads picker. Another app took the foreground before the exported file could be verified in Downloads. |
+| Full export journey on the Fire tablet | PASS | The retry saved the Korean CSV through the Fire tablet's Android Downloads picker. The exported file contained 29 parsed data rows with consistent columns and the fictional QA purchase. The test copy was removed after verification. |
 | Core workflows beyond the ledger | FAIL | The acceptance review found no multi-item order model, independent merchant directory, multiple typed evidence attachments or full parcel, return-request and warranty histories. |
 | Onboarding and optional protection | FAIL | The acceptance review found no dedicated onboarding, app lock or encrypted backup/restore. |
 | Reminder breadth | FAIL | Dedicated warranty, parcel dispatch and merchant response alert types, quiet hours and recurrence are missing. |
@@ -43,3 +43,21 @@ Run `gradlew.bat --offline --max-workers 2 -PrefundavioQa testDebugUnitTest asse
 | Architecture requirements | FAIL | The app uses Room and explicit migrations, along with AlarmManager and shared preferences. DataStore, WorkManager and the independent order, merchant and return modules specified in the brief remain unevaluated for this candidate. |
 
 **Release gate through the full master prompt: FAIL.** The draft remains available for review.
+
+## 0.2.8 candidate follow-up
+
+Amazon saved the signed **0.2.8** APK as version code 10. The draft still targets 12 Fire tablets, includes the reviewer instructions, and remains unsubmitted with export certification unchecked.
+
+| Area | Status | Evidence or remaining work |
+| --- | --- | --- |
+| Build and signing | PASS | The offline debug, release and instrumentation builds passed with all 17 unit tests. Android lint reported zero errors, 28 warnings and three hints. The signed APK uses the established Refundavio certificate and signing schemes v2 and v3. SHA-256 `3426E384AF209E84AAF8B281AF08DDFBF6F861BCC86C6BA3AC97B7FE0E57257F`. The local output is `D:\Refundavio Amazon Review 0.2.8\Refundavio-0.2.8-Amazon.apk`. |
+| Setup and currency | PASS | The optional setup presents language, currency, reminders, privacy and a first-purchase action. The Fire tablet test changed the preferred currency and verified that the next purchase used it. |
+| System file export | PASS | The 0.2.8 candidate saved a Korean CSV to the Fire tablet's Downloads folder. The test parsed 34 data rows and removed the fictional export after verification. |
+| Regional resources | PASS | English has device-region and explicit UK, US and Australian choices. Canadian French and Latin American Spanish use validated regional overrides. The Fire tablet verified locale resolution for `fr-CA`, `es-419` and `es-MX`. All 17 full translations passed validation with 186 strings and three plural groups each. |
+| Warranty and quiet hours | PASS | The Fire tablet posted an opt-in warranty notification with generic text and private lock-screen visibility. It also posted the return, follow-up and warranty reminders at 02:12:46 GMT for a 02:12:41 GMT schedule, after the QA process had exited. Unit tests verify expiry reminders, archived-record exclusion, overnight deferral and same-day quiet hours. |
+| Orders and merchant data | PASS | The Fire tablet created a second item from an order, carried over the merchant, currency and reference, and preserved independent refund balances. The migration test upgraded the original database to schema 4 with its purchase intact and verified saving a merchant profile. The physical Fire tablet merchant directory opened a linked fictional purchase. |
+| Touch shortcut fallback | PASS | A Fire tablet test verified that the Speak control is disabled when no recognition activity is present and that the touch shortcut opens the return deadline queue. Actual speech recognition and per-language spoken output remain unverified. |
+| Amazon entitlement and receipt validation | BLOCKED | Amazon Developer Console reported no in-app items for Refundavio. The Premium SDK flow, configured entitlement SKU, receipt verification service and sandbox coverage are still required. [Amazon IAP testing](https://developer.amazon.com/docs/in-app-purchasing/iap-testing-overview.html) |
+| Remaining feature and asset scope | FAIL | Typed multi-document evidence, detailed parcel and warranty histories, parcel and merchant-response reminder types, app lock, encrypted backup and restore, and the full local assistant remain incomplete. The eight-shot store galleries, accessibility review and broader device validation are still open. |
+
+**Submission status: FAIL against the full master prompt.**

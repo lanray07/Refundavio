@@ -72,4 +72,46 @@ class ReminderPlanTest {
         assertTrue(plan.due.isEmpty())
         assertEquals(Instant.parse("2026-03-29T01:30:00Z"), plan.next)
     }
+
+    @Test fun warrantyRemindersStandAloneAndStopAfterArchiving() {
+        val expiry = today.plusDays(7)
+        val base = case(stage = Stage.CLOSED)
+        val item = base.copy(record = base.record.copy(warranty = expiry))
+        val key = ReminderKey(1, ReminderKind.WARRANTY)
+        val settings = ReminderSettings(warranties = true)
+        val notice = ReminderEvent(key, expiry, today)
+        val first = ReminderPlan.calculate(listOf(item), emptyMap(), settings, now, zone)
+        assertEquals(listOf(notice), first.due)
+        val expiryTime = expiry.atTime(settings.time).atZone(zone).toInstant()
+        assertEquals(expiryTime, first.next)
+        assertEquals(listOf(ReminderEvent(key, expiry, expiry)),
+            ReminderPlan.calculate(listOf(item), mapOf(key to notice), settings, expiryTime, zone).due)
+        val archived = item.copy(record = item.record.copy(archived = true))
+        assertEquals(ReminderPlan(emptyList(), null, emptySet()),
+            ReminderPlan.calculate(listOf(archived), mapOf(key to notice), settings, now, zone))
+    }
+
+    @Test fun overnightQuietHoursDelayDeadlineAndOverdueCatchUp() {
+        val item = case(today, today.minusDays(2))
+        val quiet = QuietHours(LocalTime.of(22, 0), LocalTime.of(7, 0))
+        val settings = enabled.copy(time = LocalTime.of(23, 0), leadDays = setOf(0), quietHours = quiet)
+        val atNight = ReminderPlan.calculate(listOf(item), emptyMap(), settings,
+            Instant.parse("2026-11-15T23:30:00Z"), zone)
+        assertTrue(atNight.due.isEmpty())
+        val sunrise = Instant.parse("2026-11-16T07:00:00Z")
+        assertEquals(sunrise, atNight.next)
+        val after = ReminderPlan.calculate(listOf(item), emptyMap(), settings, sunrise, zone)
+        assertEquals(listOf(ReminderEvent(deadline, today, today),
+            ReminderEvent(followUp, today.minusDays(2), today.minusDays(2))), after.due)
+    }
+
+    @Test fun sameDayQuietHoursDeferOnlyTimesInsideWindow() {
+        val quiet = QuietHours(LocalTime.of(12, 0), LocalTime.of(14, 0))
+        val item = case(followUpDate = today)
+        val afternoon = ReminderPlan.calculate(listOf(item), emptyMap(), enabled.copy(
+            quietHours = quiet, time = LocalTime.of(13, 0)), now, zone)
+        assertEquals(Instant.parse("2026-11-15T14:00:00Z"), afternoon.next)
+        val morning = ReminderPlan.calculate(listOf(item), emptyMap(), enabled.copy(quietHours = quiet), now, zone)
+        assertEquals(listOf(followUp), morning.due.map { it.key })
+    }
 }

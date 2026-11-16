@@ -12,6 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.util.Locale
 
 @Entity(tableName = "cases")
 data class CaseRow(
@@ -38,6 +39,12 @@ data class ReceiptRow(@PrimaryKey(autoGenerate = true) val id: Long = 0, val cas
 @Entity(tableName = "contacts", foreignKeys = [ForeignKey(entity = CaseRow::class, parentColumns = ["id"],
     childColumns = ["caseId"], onDelete = ForeignKey.CASCADE)], indices = [Index("caseId")])
 data class ContactRow(@PrimaryKey(autoGenerate = true) val id: Long = 0, val caseId: Long, val day: Long, val note: String)
+
+@Entity(tableName = "merchants")
+data class MerchantRow(@PrimaryKey val key: String, val name: String, val website: String, val phone: String,
+                       val email: String, val policy: String)
+
+internal fun merchantKey(name: String) = name.trim().lowercase(Locale.ROOT)
 
 @Entity(tableName = "reminder_history", primaryKeys = ["caseId", "kind"],
     foreignKeys = [ForeignKey(entity = CaseRow::class, parentColumns = ["id"],
@@ -74,17 +81,20 @@ interface LedgerDao {
     @Query("DELETE FROM receipts WHERE id = :id AND caseId = :caseId") suspend fun removeReceipt(caseId: Long, id: Long)
     @Query("DELETE FROM cases WHERE id = :id") suspend fun remove(id: Long)
     @Query("DELETE FROM cases") suspend fun erase()
+    @Query("SELECT * FROM merchants ORDER BY name COLLATE NOCASE") fun observeMerchants(): Flow<List<MerchantRow>>
+    @Upsert suspend fun saveMerchant(row: MerchantRow)
+    @Query("DELETE FROM merchants") suspend fun eraseMerchants()
     @Query("UPDATE cases SET followUp = :date WHERE id = :id") suspend fun followUp(id: Long, date: Long?)
     @Query("UPDATE cases SET archived = :archived WHERE id = :id") suspend fun setArchived(id: Long, archived: Boolean)
-    @Transaction @Query("SELECT * FROM cases WHERE archived = 0 AND (deadline IS NOT NULL OR followUp IS NOT NULL)")
+    @Transaction @Query("SELECT * FROM cases WHERE archived = 0 AND (deadline IS NOT NULL OR followUp IS NOT NULL OR warranty IS NOT NULL)")
     suspend fun reminderCases(): List<Joined>
     @Query("SELECT * FROM reminder_history") suspend fun reminderHistory(): List<ReminderHistory>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun markReminders(history: List<ReminderHistory>)
     @Query("DELETE FROM reminder_history WHERE caseId = :id AND kind = :kind") suspend fun resetReminder(id: Long, kind: String)
 }
 
-@Database(entities = [CaseRow::class, ReceiptRow::class, ContactRow::class, ReminderHistory::class],
-    version = 3, exportSchema = true)
+@Database(entities = [CaseRow::class, ReceiptRow::class, ContactRow::class, ReminderHistory::class, MerchantRow::class],
+    version = 4, exportSchema = true)
 abstract class LedgerDb : RoomDatabase() {
     abstract fun ledger(): LedgerDao
 
@@ -106,9 +116,18 @@ abstract class LedgerDb : RoomDatabase() {
             }
         }
 
+        internal val merchantMigration = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE merchants (
+                    `key` TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, website TEXT NOT NULL,
+                    phone TEXT NOT NULL, email TEXT NOT NULL, policy TEXT NOT NULL
+                )""")
+            }
+        }
+
         fun open(context: Context): LedgerDb = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(context.applicationContext, LedgerDb::class.java, "refundavio.db")
-                .addMigrations(remindersMigration, archiveMigration).build().also { instance = it }
+                .addMigrations(remindersMigration, archiveMigration, merchantMigration).build().also { instance = it }
         }
     }
 }
@@ -126,6 +145,9 @@ class LedgerModel(application: Application) : AndroidViewModel(application) {
     fun reload() { refresh.update { it + 1 } }
     private val _error = MutableStateFlow(false)
     val error = _error.asStateFlow()
+    val merchants = refresh.flatMapLatest {
+        dao.observeMerchants().catch { emit(emptyList()) }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
     fun clearError() { _error.value = false }
     private fun write(block: suspend () -> Unit) {
         viewModelScope.launch {
@@ -149,6 +171,7 @@ class LedgerModel(application: Application) : AndroidViewModel(application) {
                         dao.update(CaseRow.from(c.copy(archived = old.row.archived)))
                         if (old.row.deadline != c.deadline?.toEpochDay()) dao.resetReminder(c.id, ReminderKind.DEADLINE.name)
                         if (old.row.followUp != c.followUp?.toEpochDay()) dao.resetReminder(c.id, ReminderKind.FOLLOW_UP.name)
+                        if (old.row.warranty != c.warranty?.toEpochDay()) dao.resetReminder(c.id, ReminderKind.WARRANTY.name)
                         c.id
                     }
                 }
@@ -174,7 +197,11 @@ class LedgerModel(application: Application) : AndroidViewModel(application) {
         require(!archived || existing.outstanding.signum() == 0)
         dao.setArchived(id, archived)
     }
-    fun erase() = write { dao.erase() }
+    fun erase() = write { dao.erase(); dao.eraseMerchants() }
+    fun saveMerchant(row: MerchantRow) = write {
+        require(row.name.isNotBlank() && row.key == merchantKey(row.name))
+        dao.saveMerchant(row)
+    }
     private suspend fun updateFollowUp(id: Long, date: LocalDate?) {
         val next = date?.toEpochDay()
         val existing = requireNotNull(dao.get(id)).row

@@ -68,13 +68,13 @@ internal fun RecordsPage(title: Int, hint: Int, cases: List<CaseSnapshot>, date:
 }
 
 @Composable
-internal fun CaseEditor(initial: CaseSnapshot?, cancel: () -> Unit, save: (RecoveryCase) -> Unit) {
+internal fun CaseEditor(initial: CaseSnapshot?, cancel: () -> Unit, order: RecoveryCase? = null, save: (RecoveryCase) -> Unit) {
     val c = initial?.record
     val locale = appLocale()
     val context = LocalContext.current
     var item by rememberSaveable { mutableStateOf(c?.item.orEmpty()) }
-    var merchant by rememberSaveable { mutableStateOf(c?.merchant.orEmpty()) }
-    var code by rememberSaveable { mutableStateOf(c?.currency ?: defaultCurrency(locale)) }
+    var merchant by rememberSaveable { mutableStateOf(c?.merchant ?: order?.merchant.orEmpty()) }
+    var code by rememberSaveable { mutableStateOf(c?.currency ?: order?.currency ?: preferredCurrency(context, locale)) }
     var expected by rememberSaveable { mutableStateOf(c?.expected?.takeIf { it > 0 }?.let { Money.input(it, code, locale) }.orEmpty()) }
     var boughtFor by rememberSaveable { mutableStateOf(c?.purchaseAmount?.let { Money.input(it, code, locale) }.orEmpty()) }
     val stages = Stage.entries.filter { it !in setOf(Stage.PARTIAL, Stage.REFUNDED) }
@@ -82,15 +82,15 @@ internal fun CaseEditor(initial: CaseSnapshot?, cancel: () -> Unit, save: (Recov
     var deadline by rememberSaveable { mutableStateOf(c?.deadline) }
     var follow by rememberSaveable { mutableStateOf(c?.followUp) }
     var warranty by rememberSaveable { mutableStateOf(c?.warranty) }
-    var bought by rememberSaveable { mutableStateOf(c?.purchaseDate) }
-    var reference by rememberSaveable { mutableStateOf(c?.orderReference.orEmpty()) }
+    var bought by rememberSaveable { mutableStateOf(c?.purchaseDate ?: order?.purchaseDate) }
+    var reference by rememberSaveable { mutableStateOf(c?.orderReference ?: order?.orderReference.orEmpty()) }
     var carrier by rememberSaveable { mutableStateOf(c?.carrier.orEmpty()) }
     var tracking by rememberSaveable { mutableStateOf(c?.tracking.orEmpty()) }
     var note by rememberSaveable { mutableStateOf(c?.note.orEmpty()) }
     var attachment by rememberSaveable { mutableStateOf(c?.attachment) }
     var attachmentError by rememberSaveable { mutableStateOf(false) }
     var showError by rememberSaveable { mutableStateOf(false) }
-    var expanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(order != null) }
     val pick = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null && uri.scheme == "content") {
             attachmentError = runCatching {
@@ -139,7 +139,7 @@ internal fun CaseEditor(initial: CaseSnapshot?, cancel: () -> Unit, save: (Recov
 }
 
 @Composable
-private fun Field(value: String, change: (String) -> Unit, label: Int, maxLength: Int, enabled: Boolean = true,
+internal fun Field(value: String, change: (String) -> Unit, label: Int, maxLength: Int, enabled: Boolean = true,
                   singleLine: Boolean = true, keyboard: KeyboardType = KeyboardType.Text) {
     OutlinedTextField(value, { if (it.length <= maxLength) change(it) }, modifier = Modifier.fillMaxWidth(), enabled = enabled,
         label = { Text(stringResource(label)) }, singleLine = singleLine, maxLines = if (singleLine) 1 else 4,
@@ -183,7 +183,8 @@ internal fun DateField(label: Int, value: LocalDate?, clearable: Boolean = true,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, model: LedgerModel,
-                         close: () -> Unit, edit: () -> Unit) {
+                         close: () -> Unit, edit: () -> Unit, orderItems: List<CaseSnapshot>,
+                         openRecord: (Long) -> Unit, addOrderItem: () -> Unit) {
     val c = item.record
     val locale = appLocale()
     val context = LocalContext.current
@@ -217,6 +218,7 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
                 c.purchaseAmount?.let { Text(stringResource(R.string.label_value, stringResource(R.string.purchase_amount), Money.format(it.toBigDecimal(), c.currency, locale))) }
                 listOf(R.string.order_ref to c.orderReference, R.string.carrier to c.carrier, R.string.tracking to c.tracking, R.string.notes to c.note)
                     .filter { it.second.isNotBlank() }.forEach { (label, text) -> SelectionContainer { Text(stringResource(R.string.label_value, stringResource(label), text)) } }
+                if (orderItems.isNotEmpty()) TextButton(onClick = { action = "order" }) { Text(stringResource(R.string.order_items)) }
                 if (c.attachment != null) {
                     TextButton(onClick = {
                         attachmentError = runCatching {
@@ -260,6 +262,21 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
     }
     val dismiss = { action = "" }
     when (action) {
+        "order" -> AlertDialog(onDismissRequest = dismiss, title = { Text(stringResource(R.string.order_items)) },
+            text = {
+                LazyColumn(Modifier.heightIn(max = 360.dp)) {
+                    items(orderItems, key = { it.record.id }) { member ->
+                        TextButton(onClick = { dismiss(); openRecord(member.record.id) },
+                            modifier = Modifier.fillMaxWidth(), enabled = member.record.id != c.id) {
+                            Text(stringResource(R.string.label_value, member.record.item, stringResource(member.stage.label)))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                if (!demo) Button(onClick = { dismiss(); addOrderItem() }) { Text(stringResource(R.string.add_order_item)) }
+            },
+            dismissButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.close)) } })
         "receive" -> PaymentDialog(c.currency, today, dismiss) { amount, day -> model.receive(c.id, c.currency, amount, day); dismiss() }
         "contact" -> ContactDialog(today, c.followUp, dismiss) { note, day, next -> model.contact(c.id, note, day, next); dismiss() }
         "reschedule" -> {
@@ -338,17 +355,64 @@ private fun Confirm(title: Int, message: Int, close: () -> Unit, action: () -> U
 
 @Composable
 internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo: Boolean, toggleDemo: () -> Unit,
-                          erase: () -> Unit, voice: () -> Unit, cases: List<CaseSnapshot>, today: LocalDate) {
+                          erase: () -> Unit, voice: () -> Unit, cases: List<CaseSnapshot>, today: LocalDate,
+                          openSetup: () -> Unit, openMerchants: () -> Unit) {
     var confirm by rememberSaveable { mutableStateOf(false) }
     var reminders by rememberSaveable { mutableStateOf(false) }
     var privacy by rememberSaveable { mutableStateOf(false) }
     var reports by rememberSaveable { mutableStateOf(false) }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        PageTitle(stringResource(R.string.more), stringResource(R.string.settings_hint))
+        AppLanguagePicker()
+        PreferredCurrencyPicker()
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.spoken_feedback), Modifier.weight(1f)); Switch(spoken, changeSpoken)
+        }
+        Text(stringResource(R.string.spoken_privacy), style = MaterialTheme.typography.bodySmall)
+        OutlinedButton(onClick = voice, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.voice_title)) }
+        OutlinedButton(onClick = { reminders = true }, modifier = Modifier.fillMaxWidth()) {
+            Icon(painter = androidx.compose.ui.res.painterResource(R.drawable.ic_reminder), contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.reminder_settings))
+        }
+        OutlinedButton(onClick = { reports = true }, modifier = Modifier.fillMaxWidth(), enabled = !demo && cases.isNotEmpty()) {
+            Text(stringResource(R.string.reports))
+        }
+        OutlinedButton(onClick = openMerchants, modifier = Modifier.fillMaxWidth(), enabled = !demo) {
+            Text(stringResource(R.string.merchants))
+        }
+        TextButton(onClick = openSetup, enabled = !demo) { Text(stringResource(R.string.setup_open)) }
+        HorizontalDivider()
+        Text(stringResource(R.string.demo_hint))
+        OutlinedButton(onClick = toggleDemo, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(if (demo) R.string.exit_demo else R.string.preview_demo))
+        }
+        HorizontalDivider()
+        Text(stringResource(R.string.privacy_hint))
+        OutlinedButton(onClick = { privacy = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.privacy_policy_title))
+        }
+        TextButton(onClick = { confirm = true }, enabled = !demo) { Text(stringResource(R.string.erase_data), color = MaterialTheme.colorScheme.error) }
+    }
+    if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
+    if (reminders) ReminderSettingsDialog { reminders = false }
+    if (reports && !demo) ReportsDialog(cases, today) { reports = false }
+    if (privacy) PrivacyPolicyDialog { privacy = false }
+}
+
+@Composable
+internal fun AppLanguagePicker() {
     val context = LocalContext.current
     val languageOptions = listOf(
         "" to stringResource(R.string.device_language),
         "en" to "English",
+        "en-GB" to "English (UK)",
+        "en-US" to "English (US)",
+        "en-AU" to "English (Australia)",
         "es" to "Español",
+        "es-419" to "Español (Latinoamérica)",
         "fr" to "Français",
+        "fr-CA" to "Français (Canada)",
         "ar" to "العربية",
         "hi-IN" to "हिन्दी",
         "tr-TR" to "Türkçe",
@@ -367,42 +431,16 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
     )
     val localPrefs = remember { context.getSharedPreferences("preferences", 0) }
     val index = languageOptions.indexOfFirst { it.first == localPrefs.getString("locale", "") }.coerceAtLeast(0)
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        PageTitle(stringResource(R.string.more), stringResource(R.string.settings_hint))
-        SelectOption(stringResource(R.string.language), index, languageOptions.map { it.second }) { indexSelected ->
-            localPrefs.edit().putString("locale", languageOptions[indexSelected].first).apply()
-            (context as? MainActivity)?.recreate()
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.spoken_feedback), Modifier.weight(1f)); Switch(spoken, changeSpoken)
-        }
-        Text(stringResource(R.string.spoken_privacy), style = MaterialTheme.typography.bodySmall)
-        OutlinedButton(onClick = voice, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.voice_title)) }
-        OutlinedButton(onClick = { reminders = true }, modifier = Modifier.fillMaxWidth()) {
-            Icon(painter = androidx.compose.ui.res.painterResource(R.drawable.ic_reminder), contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(8.dp))
-            Text(stringResource(R.string.reminder_settings))
-        }
-        OutlinedButton(onClick = { reports = true }, modifier = Modifier.fillMaxWidth(), enabled = !demo && cases.isNotEmpty()) {
-            Text(stringResource(R.string.reports))
-        }
-        HorizontalDivider()
-        Text(stringResource(R.string.demo_hint))
-        OutlinedButton(onClick = toggleDemo, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(if (demo) R.string.exit_demo else R.string.preview_demo))
-        }
-        HorizontalDivider()
-        Text(stringResource(R.string.privacy_hint))
-        OutlinedButton(onClick = { privacy = true }, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.privacy_policy_title))
-        }
-        TextButton(onClick = { confirm = true }, enabled = !demo) { Text(stringResource(R.string.erase_data), color = MaterialTheme.colorScheme.error) }
+    SelectOption(stringResource(R.string.language), index, languageOptions.map { it.second }) { indexSelected ->
+        localPrefs.edit().putString("locale", languageOptions[indexSelected].first).apply()
+        (context as? MainActivity)?.recreate()
     }
-    if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
-    if (reminders) ReminderSettingsDialog { reminders = false }
-    if (reports && !demo) ReportsDialog(cases, today) { reports = false }
-    if (privacy) AlertDialog(
-        onDismissRequest = { privacy = false },
+}
+
+@Composable
+internal fun PrivacyPolicyDialog(close: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = close,
         title = { Text(stringResource(R.string.privacy_policy_title)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -411,6 +449,6 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
                 Text(stringResource(R.string.report_privacy))
             }
         },
-        confirmButton = { TextButton(onClick = { privacy = false }) { Text(stringResource(R.string.close)) } }
+        confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.close)) } }
     )
 }

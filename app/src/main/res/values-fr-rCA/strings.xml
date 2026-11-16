@@ -1,0 +1,9 @@
+<resources>
+    <string name="currency">Code de devise (p. ex. CAD)</string>
+    <string name="purchases_hint">Vos articles, reçus et dossiers de remboursement.</string>
+    <string name="followups">Suivis auprès des détaillants</string>
+    <string name="followup_date">Prochaine date de suivi</string>
+    <string name="draft_followup">Rédiger un message de suivi</string>
+    <string name="reminder_settings">Rappels en arrière-plan</string>
+    <string name="reminder_followup_notice">Ouvrez Refundavio pour consulter les suivis prévus auprès des détaillants.</string>
+</resources>

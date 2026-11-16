@@ -134,6 +134,16 @@ adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 pwsh -File scripts/test-closed-reminders.ps1
 ```
 
+Warranty reminders are optional and scheduled seven days before expiry and on the expiry date. Turn on **Quiet hours** to defer new alerts scheduled during that period until it ends. Fire OS can delay delivery further to save power.
+
+## First-run setup, orders and merchants
+
+Open setup from a new dashboard or from **More** to choose a language or default purchase currency, review privacy, configure reminders and add a first purchase. You can skip setup and change these settings later.
+
+Add an order reference under a purchase’s details. **Order items** shows records with that reference and the same merchant. **Add another item** starts a new record with the merchant, order reference, currency and purchase date filled in. Each item keeps its own amounts, refunds and reminders.
+
+**More → Merchants** lists merchants from purchase records alongside saved profiles. Save contact details and return policy notes there, or open a linked purchase to see its full record. A website opens only when you choose it.
+
 ## Try the dashboard
 
 - For a read-only tour, open **More → Preview sample dashboard**. Sample purchases never enter the local ledger.

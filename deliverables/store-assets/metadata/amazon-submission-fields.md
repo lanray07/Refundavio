@@ -1,12 +1,12 @@
 # Refundavio Amazon Appstore draft for Fire tablets
 
-The following values describe the Refundavio 0.2.6 build. The [marketplace localizations](amazon-marketplace-localizations.json) contain the additional listing copy for the Amazon draft. The [English, Spanish and French listing copy](dashboard-milestone.md) documents the original dashboard milestone.
+The following values describe the Refundavio 0.2.8 draft build. The [marketplace localizations](amazon-marketplace-localizations.json) contain the additional listing copy for the Amazon draft. The [English, Spanish and French listing copy](dashboard-milestone.md) documents the original dashboard milestone.
 
 | Field | Draft value |
 | --- | --- |
 | App title | Refundavio – Returns & Refund Tracker |
 | Package | `app.refundavio` |
-| Version | 0.2.6 (version code 8) |
+| Version | 0.2.8 (version code 10) |
 | Target | Fire OS tablets. Choose supported models after the release binary is uploaded and the console reports compatibility. |
 | Category | Shopping, if available in the console. |
 | Short description | Track refunds, return deadlines and merchant follow-ups without an account. Keep purchase records on your device and set optional reminders for what needs attention. |

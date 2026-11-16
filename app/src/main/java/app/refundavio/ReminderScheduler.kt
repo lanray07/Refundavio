@@ -48,9 +48,14 @@ internal object ReminderPreferences {
         val prefs = context.getSharedPreferences("reminders", Context.MODE_PRIVATE)
         val defaults = ReminderSettings()
         val offsets = prefs.getStringSet("lead_days", defaults.leadDays.map(Int::toString).toSet()).orEmpty()
+        val quietStart = prefs.getInt("quiet_start", -1)
+        val quietEnd = prefs.getInt("quiet_end", -1)
         return ReminderSettings(
             deadlines = prefs.getBoolean("deadlines", false),
             followUps = prefs.getBoolean("follow_ups", false),
+            warranties = prefs.getBoolean("warranties", false),
+            quietHours = if (quietStart in 0..86_399 && quietEnd in 0..86_399 && quietStart != quietEnd)
+                QuietHours(LocalTime.ofSecondOfDay(quietStart.toLong()), LocalTime.ofSecondOfDay(quietEnd.toLong())) else null,
             leadDays = offsets.mapNotNull(String::toIntOrNull).filter { it in presetDays }.toSet(),
             customLead = prefs.getInt("custom_lead", -1).takeIf { it in 0..30 },
             time = LocalTime.ofSecondOfDay(prefs.getLong("second_of_day", defaults.time.toSecondOfDay().toLong())
@@ -62,6 +67,9 @@ internal object ReminderPreferences {
         context.getSharedPreferences("reminders", Context.MODE_PRIVATE).edit()
             .putBoolean("deadlines", settings.deadlines)
             .putBoolean("follow_ups", settings.followUps)
+            .putBoolean("warranties", settings.warranties)
+            .putInt("quiet_start", settings.quietHours?.start?.toSecondOfDay() ?: -1)
+            .putInt("quiet_end", settings.quietHours?.end?.toSecondOfDay() ?: -1)
             .putStringSet("lead_days", settings.leadDays.map(Int::toString).toSet())
             .putInt("custom_lead", settings.customLead ?: -1)
             .putLong("second_of_day", settings.time.toSecondOfDay().toLong())
@@ -199,10 +207,26 @@ internal object ReminderScheduler {
     }
 }
 
-private val ReminderKind.channel get() = if (this == ReminderKind.DEADLINE) "return_deadlines" else "merchant_follow_ups"
-private val ReminderKind.title get() = if (this == ReminderKind.DEADLINE) R.string.deadlines else R.string.followups
-private val ReminderKind.body get() = if (this == ReminderKind.DEADLINE) R.string.reminder_deadline_notice else R.string.reminder_followup_notice
-internal val ReminderKind.notificationId get() = if (this == ReminderKind.DEADLINE) 1001 else 1002
+private val ReminderKind.channel get() = when (this) {
+    ReminderKind.DEADLINE -> "return_deadlines"
+    ReminderKind.FOLLOW_UP -> "merchant_follow_ups"
+    ReminderKind.WARRANTY -> "warranty_expiry"
+}
+private val ReminderKind.title get() = when (this) {
+    ReminderKind.DEADLINE -> R.string.deadlines
+    ReminderKind.FOLLOW_UP -> R.string.followups
+    ReminderKind.WARRANTY -> R.string.warranty_alerts
+}
+private val ReminderKind.body get() = when (this) {
+    ReminderKind.DEADLINE -> R.string.reminder_deadline_notice
+    ReminderKind.FOLLOW_UP -> R.string.reminder_followup_notice
+    ReminderKind.WARRANTY -> R.string.reminder_warranty_notice
+}
+internal val ReminderKind.notificationId get() = when (this) {
+    ReminderKind.DEADLINE -> 1001
+    ReminderKind.FOLLOW_UP -> 1002
+    ReminderKind.WARRANTY -> 1003
+}
 
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

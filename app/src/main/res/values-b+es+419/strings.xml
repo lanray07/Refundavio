@@ -1,0 +1,9 @@
+<resources>
+    <string name="currency">Código de moneda (p. ej., MXN)</string>
+    <string name="purchases_hint">Tus productos, comprobantes y registros de reembolso.</string>
+    <string name="attach">Adjuntar comprobante o evidencia</string>
+    <string name="tracking">Número de seguimiento</string>
+    <string name="draft_followup">Redactar un mensaje de seguimiento</string>
+    <string name="reminder_settings">Recordatorios en segundo plano</string>
+    <string name="reminder_system_settings">Abrir la configuración de notificaciones</string>
+</resources>

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -113,6 +114,94 @@ class DashboardJourneyTest {
                 setLocale(Locale.forLanguageTag(tag))
             }
             assertEquals(tag, expected, context.createConfigurationContext(config).getString(R.string.warranties))
+        }
+    }
+
+    @Test fun regionalResourcesInheritTranslatedBaseStrings() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val cases = listOf(
+            Triple("fr-CA", "Code de devise (p. ex. CAD)", "Remboursements en attente"),
+            Triple("es-MX", "Código de moneda (p. ej., MXN)", "Reembolsos pendientes"),
+            Triple("es-419", "Código de moneda (p. ej., MXN)", "Reembolsos pendientes"),
+        )
+        for ((tag, currency, pending) in cases) {
+            val configuration = Configuration(context.resources.configuration).apply { setLocale(Locale.forLanguageTag(tag)) }
+            val localized = context.createConfigurationContext(configuration)
+            assertEquals(tag, currency, localized.getString(R.string.currency))
+            assertEquals(tag, pending, localized.getString(R.string.waiting_for))
+        }
+    }
+
+    @Test fun setupCurrencyPrefillsNextPurchase() {
+        val activity = ui.activity
+        val prefs = activity.getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        val original = prefs.getString("preferred_currency", null)
+        try {
+            ui.onNodeWithText(activity.getString(R.string.more)).performClick()
+            ui.onNodeWithText(activity.getString(R.string.setup_open)).performScrollTo().performClick()
+            ui.onNodeWithText(activity.getString(R.string.setup_title)).assertIsDisplayed()
+            ui.onNode(hasText(activity.getString(R.string.preferred_currency), substring = true) and hasAnyAncestor(isDialog()))
+                .performScrollTo().performClick()
+            val currency = ui.onNodeWithText(activity.getString(R.string.currency))
+            currency.performTextClearance()
+            currency.performTextInput("USD")
+            ui.onNodeWithText(activity.getString(R.string.save)).performClick()
+            ui.onNodeWithText(activity.getString(R.string.add_purchase)).performClick()
+            ui.onNodeWithText("USD").assertIsDisplayed()
+            ui.onNodeWithText(activity.getString(R.string.cancel)).performClick()
+        } finally {
+            prefs.edit().putString("preferred_currency", original).commit()
+        }
+    }
+
+    @Test fun aTouchShortcutCanOpenDeadlinesWithoutSpeechRecognition() {
+        val activity = ui.activity
+        val speech = android.content.Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        org.junit.Assume.assumeTrue(speech.resolveActivity(activity.packageManager) == null)
+        ui.onNodeWithText(activity.getString(R.string.more)).performClick()
+        ui.onNodeWithText(activity.getString(R.string.preview_demo)).performScrollTo().performClick()
+        ui.onNodeWithContentDescription(activity.getString(R.string.voice_title)).performClick()
+        ui.onNodeWithText(activity.getString(R.string.listen)).assertIsNotEnabled()
+        ui.onNodeWithText(activity.getString(R.string.voice_unavailable)).assertIsDisplayed()
+        ui.onNodeWithText(activity.getString(R.string.voice_deadlines)).performClick()
+        ui.onNodeWithText(activity.getString(R.string.run_command)).performClick()
+        ui.onNodeWithText(activity.getString(R.string.label_value, activity.getString(R.string.show),
+            activity.getString(R.string.deadlines))).assertIsDisplayed()
+    }
+
+    @Test fun anotherOrderItemKeepsItsOwnRecordAndPrefillsSharedFields() {
+        val activity = ui.activity
+        val dao = LedgerDb.open(activity).ledger()
+        val merchant = "Refundavio QA order shop"
+        val firstItem = "Refundavio QA order first item"
+        val secondItem = "Refundavio QA order second item"
+        val order = "REFUNDAVIO-QA-ORDER-LINK"
+        val firstId = runBlocking {
+            dao.insert(CaseRow.from(RecoveryCase(item = firstItem, merchant = merchant, currency = "EUR", expected = 9800,
+                stage = Stage.PROCESSING, orderReference = order)))
+        }
+        try {
+            ui.onNodeWithText(activity.getString(R.string.purchases)).performClick()
+            ui.waitUntil(10_000) { ui.onAllNodesWithText(firstItem).fetchSemanticsNodes().isNotEmpty() }
+            ui.onNodeWithText(firstItem).performClick()
+            ui.onNodeWithText(activity.getString(R.string.order_items)).performScrollTo().performClick()
+            ui.onNodeWithText(activity.getString(R.string.add_order_item)).performClick()
+            ui.onNodeWithText(activity.getString(R.string.item)).performTextInput(secondItem)
+            ui.onNodeWithText(activity.getString(R.string.save)).performClick()
+            ui.waitUntil(10_000) { runBlocking { dao.observe().first().any { it.row.item == secondItem } } }
+            runBlocking {
+                val entries = dao.observe().first().filter { it.row.orderReference == order && it.row.merchant == merchant }
+                assertEquals(2, entries.size)
+                val newItem = entries.single { it.row.item == secondItem }.row
+                assertEquals("EUR", newItem.currency)
+                assertEquals(0L, newItem.expected)
+                assertEquals(9800L, dao.get(firstId)?.row?.expected)
+            }
+        } finally {
+            runBlocking {
+                dao.observe().first().filter { it.row.item in listOf(firstItem, secondItem) &&
+                    it.row.merchant == merchant && it.row.orderReference == order }.forEach { dao.remove(it.row.id) }
+            }
         }
     }
 

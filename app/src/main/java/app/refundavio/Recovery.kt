@@ -27,6 +27,15 @@ data class RecoveryCase(
     val carrier: String = "", val tracking: String = "", val attachment: String? = null,
     val archived: Boolean = false,
 )
+
+internal fun casesInOrder(purchase: RecoveryCase, cases: List<CaseSnapshot>): List<CaseSnapshot> {
+    val reference = purchase.orderReference.trim()
+    if (reference.isEmpty()) return emptyList()
+    return cases.filter { entry ->
+        entry.record.orderReference.trim() == reference &&
+            entry.record.merchant.trim().equals(purchase.merchant.trim(), ignoreCase = true)
+    }
+}
 data class Receipt(val id: Long = 0, val amount: Long, val day: LocalDate)
 data class Contact(val id: Long = 0, val day: LocalDate, val note: String)
 

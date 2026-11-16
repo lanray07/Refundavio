@@ -37,6 +37,7 @@ internal fun ReminderSettingsDialog(close: () -> Unit) {
     var choices by remember { mutableStateOf(ReminderPreferences.read(context)) }
     var blocked by remember { mutableStateOf(false) }
     var customDialog by rememberSaveable { mutableStateOf(false) }
+    var quietTimeError by rememberSaveable { mutableStateOf(false) }
     val checkAccess = {
         blocked = ReminderKind.entries.any { choices.enables(it) && !ReminderScheduler.canPost(context, it) }
     }
@@ -62,6 +63,10 @@ internal fun ReminderSettingsDialog(close: () -> Unit) {
     val formatTime = remember(locale, context) {
         DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale,
             if (DateFormat.is24HourFormat(context)) "Hm" else "hm"), locale).withDecimalStyle(DecimalStyle.of(locale))
+    }
+    fun selectTime(current: LocalTime, changed: (LocalTime) -> Unit) {
+        TimePickerDialog(context, { _, hour, minute -> changed(LocalTime.of(hour, minute)) },
+            current.hour, current.minute, DateFormat.is24HourFormat(context)).show()
     }
     AlertDialog(onDismissRequest = close,
         title = { Text(stringResource(R.string.reminder_settings)) },
@@ -96,11 +101,31 @@ internal fun ReminderSettingsDialog(close: () -> Unit) {
                     save(choices.copy(followUps = value), permissionOnEnable = value)
                 }
                 if (choices.followUps) Text(stringResource(R.string.reminder_followup_hint))
-                OutlinedButton(onClick = {
-                    TimePickerDialog(context, { _, hour, minute -> save(choices.copy(time = LocalTime.of(hour, minute))) },
-                        choices.time.hour, choices.time.minute, DateFormat.is24HourFormat(context)).show()
-                }, modifier = Modifier.fillMaxWidth()) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                ReminderToggle(stringResource(R.string.warranties), choices.warranties) { value ->
+                    save(choices.copy(warranties = value), permissionOnEnable = value)
+                }
+                if (choices.warranties) Text(stringResource(R.string.reminder_warranty_hint))
+                OutlinedButton(onClick = { selectTime(choices.time) { save(choices.copy(time = it)) } }, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.label_value, stringResource(R.string.reminder_time), choices.time.format(formatTime)))
+                }
+                ReminderToggle(stringResource(R.string.quiet_hours), choices.quietHours != null) { enabled ->
+                    quietTimeError = false
+                    save(choices.copy(quietHours = if (enabled) QuietHours(LocalTime.of(22, 0), LocalTime.of(7, 0)) else null))
+                }
+                choices.quietHours?.let { quiet ->
+                    Text(stringResource(R.string.quiet_hours_hint), style = MaterialTheme.typography.bodySmall)
+                    for ((label, current, other) in listOf(Triple(R.string.quiet_start, quiet.start, quiet.end),
+                        Triple(R.string.quiet_end, quiet.end, quiet.start))) {
+                        OutlinedButton(onClick = { selectTime(current) { updated ->
+                            quietTimeError = updated == other
+                            if (!quietTimeError) save(choices.copy(quietHours = if (label == R.string.quiet_start)
+                                quiet.copy(start = updated) else quiet.copy(end = updated)))
+                        } }, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.label_value, stringResource(label), current.format(formatTime)))
+                        }
+                    }
+                    if (quietTimeError) Text(stringResource(R.string.quiet_time_error), color = MaterialTheme.colorScheme.error)
                 }
                 Text(stringResource(R.string.reminder_timing), style = MaterialTheme.typography.bodySmall)
                 if (blocked) {

@@ -119,13 +119,18 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
     val state by model.cases.collectAsStateWithLifecycle()
     val data = (state as? LedgerState.Ready)?.cases
     val error by model.error.collectAsStateWithLifecycle()
+    val merchants by model.merchants.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val locale = appLocale()
     val preferences = remember { context.getSharedPreferences("preferences", 0) }
     var spoken by remember { mutableStateOf(preferences.getBoolean("spoken", false)) }
+    var setupComplete by remember { mutableStateOf(preferences.getBoolean("setup_complete", false)) }
+    var setupOpen by rememberSaveable { mutableStateOf(false) }
+    var merchantsOpen by rememberSaveable { mutableStateOf(false) }
     var tab by rememberSaveable { mutableStateOf(Tab.DASHBOARD) }
     var recordId by rememberSaveable { mutableStateOf<Long?>(null) }
     var editorId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var newOrderItemFrom by rememberSaveable { mutableStateOf<Long?>(null) }
     var filter by rememberSaveable { mutableStateOf(0) }
     var demo by rememberSaveable { mutableStateOf(false) }
     var today by remember { mutableStateOf(LocalDate.now()) }
@@ -147,17 +152,21 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
     }
     var utterance by remember { mutableStateOf("") }
     var engine by remember { mutableStateOf<TextToSpeech?>(null) }
-    var engineReady by remember { mutableStateOf(false) }
+    var engineReady by remember { mutableStateOf<Boolean?>(null) }
     val ttsError = stringResource(R.string.tts_error)
     DisposableEffect(spoken) {
-        val instance = if (spoken) TextToSpeech(context.applicationContext) { engineReady = it == TextToSpeech.SUCCESS } else null
+        var active = true
+        val instance = if (spoken) TextToSpeech(context.applicationContext) {
+            if (active) engineReady = it == TextToSpeech.SUCCESS
+        } else null
+        if (!spoken) utterance = ""
         engine = instance
-        onDispose { instance?.shutdown(); engineReady = false }
+        onDispose { active = false; instance?.shutdown(); engineReady = null }
     }
     LaunchedEffect(utterance, engineReady, engine, locale) {
-        if (utterance.isNotEmpty() && engine != null) {
+        if (utterance.isNotEmpty() && engine != null && engineReady != null) {
             val active = engine ?: return@LaunchedEffect
-            if (engineReady && active.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE) {
+            if (engineReady == true && active.setLanguage(locale) >= TextToSpeech.LANG_AVAILABLE) {
                 if (active.speak(utterance, TextToSpeech.QUEUE_FLUSH, null, "dashboard-summary") == TextToSpeech.ERROR) snackbar.showSnackbar(ttsError)
             } else snackbar.showSnackbar(ttsError)
             utterance = ""
@@ -165,14 +174,30 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
     }
 
     fun openTab(destination: Tab, start: Int = 0) { tab = destination; filter = start }
+    fun finishSetup() {
+        preferences.edit().putBoolean("setup_complete", true).apply()
+        setupComplete = true
+        setupOpen = false
+    }
+    fun changeSpoken(enabled: Boolean) {
+        spoken = enabled
+        preferences.edit().putBoolean("spoken", enabled).apply()
+    }
     fun onVoice() { transcript = ""; voiceError = false; voiceOpen = true }
     LaunchedEffect(reminderDestination) {
         if (reminderDestination != null) {
             demo = false
             recordId = null
             editorId = null
+            newOrderItemFrom = null
             voiceOpen = false
-            openTab(Tab.RETURNS, if (reminderDestination == ReminderKind.DEADLINE) 1 else 2)
+            setupOpen = false
+            merchantsOpen = false
+            when (reminderDestination) {
+                ReminderKind.DEADLINE -> openTab(Tab.RETURNS, 1)
+                ReminderKind.FOLLOW_UP -> openTab(Tab.RETURNS, 2)
+                ReminderKind.WARRANTY -> openTab(Tab.WARRANTIES)
+            }
             consumeReminder()
         }
     }
@@ -217,7 +242,10 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
                     } else key(tab, filter) {
                         when (tab) {
                             Tab.DASHBOARD -> RecoveryScreen(snapshot, today, detail = { recordId = it }, add = { editorId = 0L },
-                                viewReturns = { openTab(Tab.RETURNS, it) }, viewWarranties = { openTab(Tab.WARRANTIES) })
+                                viewReturns = { openTab(Tab.RETURNS, it) }, viewWarranties = { openTab(Tab.WARRANTIES) },
+                                setup = if (!demo && data?.isEmpty() == true && !setupComplete) {
+                                    { SetupCard(open = { setupOpen = true }, skip = ::finishSetup) }
+                                } else null)
                             Tab.PURCHASES -> RecordsPage(R.string.purchases, R.string.purchases_hint,
                                 cases.filter { it.record.archived == (filter == 1) }, today, { recordId = it }, { editorId = 0L },
                                 filter, { filter = it }, filters = listOf(R.string.active_purchases, R.string.archived_purchases))
@@ -233,10 +261,9 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
                             Tab.WARRANTIES -> RecordsPage(R.string.warranties, R.string.warranty_hint,
                                 cases.filter { !it.record.archived && it.record.warranty != null }.sortedBy { it.record.warranty }, today,
                                 { recordId = it }, { editorId = 0L }, warranty = true)
-                            Tab.MORE -> SettingsPage(spoken, changeSpoken = {
-                                spoken = it; preferences.edit().putBoolean("spoken", it).apply()
-                            }, demo, { demo = !demo; openTab(Tab.DASHBOARD) }, { model.erase() }, ::onVoice,
-                                data.orEmpty(), today)
+                            Tab.MORE -> SettingsPage(spoken, ::changeSpoken,
+                                demo, { demo = !demo; openTab(Tab.DASHBOARD) }, { model.erase() }, ::onVoice,
+                                data.orEmpty(), today, openSetup = { setupOpen = true }, openMerchants = { merchantsOpen = true })
                         }
                     }
                 }
@@ -244,16 +271,28 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
         }
     }
 
+    if (setupOpen && !demo) FirstRunSetup(spoken, ::changeSpoken, addPurchase = {
+        setupOpen = false
+        editorId = 0L
+    }, close = { setupOpen = false })
+    if (merchantsOpen && !demo) MerchantDirectory(merchants, data.orEmpty(), model::saveMerchant,
+        openRecord = { id -> merchantsOpen = false; recordId = id }, close = { merchantsOpen = false })
+
     val edit = editorId
     if (edit != null) {
         val existing = cases.firstOrNull { it.record.id == edit }
+        val order = cases.firstOrNull { it.record.id == newOrderItemFrom }?.record
         if (edit == 0L || existing != null) key(edit) {
-            CaseEditor(existing, { editorId = null }) { changed ->
-                model.save(changed) { id -> editorId = null; recordId = id }
+            CaseEditor(existing, { editorId = null; newOrderItemFrom = null }, order) { changed ->
+                model.save(changed) { id -> editorId = null; newOrderItemFrom = null; recordId = id }
             }
         }
     } else if (detail != null) key(detail.record.id) {
-        CaseDetails(detail, today, demo, model, close = { recordId = null }, edit = { editorId = detail.record.id })
+        CaseDetails(detail, today, demo, model, close = { recordId = null }, edit = { editorId = detail.record.id },
+            orderItems = casesInOrder(detail.record, cases), openRecord = { recordId = it }, addOrderItem = {
+                newOrderItemFrom = detail.record.id
+                editorId = 0L
+            })
     }
 
     if (voiceOpen) {
@@ -262,19 +301,24 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
         else stringResource(R.string.voice_summary, snapshot.outstanding.entries.joinToString { Money.format(it.value, it.key, locale) })
         var voiceResult by rememberSaveable { mutableStateOf("") }
         val unknown = stringResource(R.string.voice_unknown)
-        val launchSpeech = {
-            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        val speechIntent = remember(locale) {
+            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale.toLanguageTag())
-            try { speech.launch(intent); voiceError = false } catch (_: android.content.ActivityNotFoundException) { voiceError = true }
+        }
+        val supportsSpeech = remember(context, speechIntent) {
+            speechIntent.resolveActivity(context.packageManager) != null
+        }
+        val launchSpeech = {
+            try { speech.launch(speechIntent); voiceError = false } catch (_: android.content.ActivityNotFoundException) { voiceError = true }
             catch (_: SecurityException) { voiceError = true }
         }
         AlertDialog(onDismissRequest = { voiceOpen = false }, title = { Text(stringResource(R.string.voice_title)) },
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(stringResource(R.string.voice_privacy))
-                    OutlinedButton(onClick = launchSpeech) { Text(stringResource(R.string.listen)) }
-                    if (voiceError) Text(stringResource(R.string.voice_unavailable), color = MaterialTheme.colorScheme.error)
+                    OutlinedButton(onClick = launchSpeech, enabled = supportsSpeech) { Text(stringResource(R.string.listen)) }
+                    if (!supportsSpeech || voiceError) Text(stringResource(R.string.voice_unavailable), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     OutlinedTextField(transcript, { transcript = it }, label = { Text(stringResource(R.string.command)) }, modifier = Modifier.fillMaxWidth())
                     commands.forEach { sample -> TextButton(onClick = { transcript = sample }) { Text(sample) } }
                     if (voiceResult.isNotEmpty()) Text(voiceResult)
@@ -325,7 +369,7 @@ internal fun PageTitle(title: String, subtitle: String) {
 
 @Composable
 private fun RecoveryScreen(s: Dashboard, today: LocalDate, detail: (Long) -> Unit, add: () -> Unit,
-                           viewReturns: (Int) -> Unit, viewWarranties: () -> Unit) {
+                           viewReturns: (Int) -> Unit, viewWarranties: () -> Unit, setup: (@Composable () -> Unit)?) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val columns = maxWidth >= 670.dp
         Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = if (columns) 28.dp else 16.dp, vertical = 22.dp),
@@ -335,6 +379,7 @@ private fun RecoveryScreen(s: Dashboard, today: LocalDate, detail: (Long) -> Uni
                     fontWeight = FontWeight.Bold, fontSize = 11.sp, letterSpacing = 2.sp)
                 PageTitle(stringResource(R.string.recovery_title), stringResource(R.string.recovery_subtitle))
             }
+            setup?.invoke()
             BalanceCard(s, { viewReturns(3) }, columns)
             val dueCount = s.followUps.count { !it.record.followUp!!.isAfter(today) }
             val deadlineCount = s.returns.count { !it.record.deadline!!.isBefore(today) && !it.record.deadline.isAfter(today.plusDays(7)) }

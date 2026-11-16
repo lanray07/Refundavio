@@ -30,6 +30,7 @@ android {
     ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 }
 dependencies {
+    debugImplementation("com.amazon.device:amazon-appstore-sdk:3.0.9")
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

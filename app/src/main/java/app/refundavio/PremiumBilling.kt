@@ -36,17 +36,25 @@ internal class PremiumBilling private constructor(context: Context) : Purchasing
     private val history = linkedMapOf<String, AmazonReceipt>()
     private val cancelled = mutableSetOf<String>()
 
+    fun registerListener() {
+        if (!configured || registered) return
+        // Register before the activity resumes so the Appstore can track foreground checkout.
+        try {
+            PurchasingService.registerListener(app, this)
+            registered = true
+        } catch (_: RuntimeException) {
+            finish(R.string.premium_error)
+        }
+    }
+
     fun recoverPreviousPurchase() {
         if (preferences.getBoolean("previouslyVerified", false)) open()
     }
 
     fun open() {
-        if (!configured) return
+        registerListener()
+        if (!registered) return
         try {
-            if (!registered) {
-                PurchasingService.registerListener(app, this)
-                registered = true
-            }
             if (!state.value.busy) {
                 catalogueId = PurchasingService.getProductData(setOf(SKU))
                 restore()

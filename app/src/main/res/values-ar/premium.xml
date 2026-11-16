@@ -1,0 +1,14 @@
+<resources>
+    <string name="premium_value">اشترِ مرة واحدة لتصدير تقارير PDF وCSV معًا في ملف ZIP واحد.</string>
+    <string name="premium_privacy">يستخدم الشراء والاستعادة حسابك على Amazon. يرسل Refundavio معرّف مستخدم Amazon ومعرّف إيصال Premium فقط إلى خادم التحقق لفحصهما لدى Amazon. تبقى سجلاتك على جهازك.</string>
+    <string name="premium_unavailable">عمليات شراء Premium غير متاحة حاليًا.</string>
+    <string name="premium_checking">جارٍ التحقق لدى Amazon…</string>
+    <string name="premium_active">Premium نشط.</string>
+    <string name="premium_error">تعذّر التحقق من Premium. تحقق من الاتصال وحاول استعادة المشتريات مجددًا.</string>
+    <string name="premium_no_purchase">لم يتم العثور على شراء Premium نشط لحساب Amazon هذا.</string>
+    <string name="premium_pending">لا تزال Amazon تعالج عملية الشراء. حاول استعادتها لاحقًا.</string>
+    <string name="premium_purchase_incomplete">لم تكتمل عملية الشراء.</string>
+    <string name="premium_buy">شراء لمرة واحدة · %1$s</string>
+    <string name="premium_restore">استعادة المشتريات</string>
+    <string name="premium_report_bundle">حزمة PDF وCSV ‏(Premium)</string>
+</resources>

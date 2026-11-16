@@ -62,3 +62,5 @@ Amazon saved the signed **0.2.8** APK as version code 10. The draft still target
 | Remaining feature and asset scope | FAIL | Typed multi-document evidence, detailed parcel and warranty histories, parcel and merchant-response reminder types, app lock, encrypted backup and restore, and the full local assistant remain incomplete. The eight-shot store galleries, accessibility review and broader device validation are still open. |
 
 **Submission status: FAIL against the full master prompt.**
+
+The local 0.2.9 candidate adds the customer purchase and restore flow, the Premium report bundle, and server-side receipt verification. The integrated flow passed on the Fire tablet with Amazon App Tester. Production verifier deployment and a production-mode checkout remain open. [0.2.9 billing verification](amazon-premium-release.md)

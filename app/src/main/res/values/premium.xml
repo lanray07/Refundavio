@@ -1,0 +1,15 @@
+<resources>
+    <string name="premium_title">Refundavio Premium</string>
+    <string name="premium_value">Make a one-time purchase to export PDF and CSV reports together in one ZIP file.</string>
+    <string name="premium_privacy">Premium purchase and restore use your Amazon account. To verify ownership, Refundavio sends only your Amazon user ID and Premium receipt ID to its verification server, which checks them with Amazon. Your Refundavio records stay on your device.</string>
+    <string name="premium_unavailable">Amazon Premium purchases are unavailable right now.</string>
+    <string name="premium_checking">Checking with Amazon…</string>
+    <string name="premium_active">Premium is active.</string>
+    <string name="premium_error">Could not verify Premium. Check your connection and try restoring purchases again.</string>
+    <string name="premium_no_purchase">No active Premium purchase was found for this Amazon account.</string>
+    <string name="premium_pending">Amazon is still processing your purchase. Try restoring purchases later.</string>
+    <string name="premium_purchase_incomplete">The purchase did not complete.</string>
+    <string name="premium_buy">Buy once · %1$s</string>
+    <string name="premium_restore">Restore purchases</string>
+    <string name="premium_report_bundle">PDF and CSV bundle (Premium)</string>
+</resources>

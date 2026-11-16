@@ -1,0 +1,14 @@
+<resources>
+    <string name="premium_value">Un seul achat permet d’exporter les rapports PDF et CSV ensemble dans un fichier ZIP.</string>
+    <string name="premium_privacy">L’achat et la restauration utilisent votre compte Amazon. Refundavio envoie uniquement votre identifiant Amazon et celui du reçu Premium à son serveur, qui les vérifie auprès d’Amazon. Vos dossiers restent sur votre appareil.</string>
+    <string name="premium_unavailable">Les achats Premium sont indisponibles pour le moment.</string>
+    <string name="premium_checking">Vérification auprès d’Amazon…</string>
+    <string name="premium_active">Premium est actif.</string>
+    <string name="premium_error">Impossible de vérifier Premium. Vérifiez votre connexion et réessayez la restauration.</string>
+    <string name="premium_no_purchase">Aucun achat Premium actif pour ce compte Amazon.</string>
+    <string name="premium_pending">Amazon traite encore votre achat. Réessayez la restauration plus tard.</string>
+    <string name="premium_purchase_incomplete">L’achat n’a pas abouti.</string>
+    <string name="premium_buy">Achat unique · %1$s</string>
+    <string name="premium_restore">Restaurer les achats</string>
+    <string name="premium_report_bundle">Rapports PDF et CSV (Premium)</string>
+</resources>

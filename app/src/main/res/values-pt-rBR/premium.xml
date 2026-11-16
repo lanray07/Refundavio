@@ -1,0 +1,14 @@
+<resources>
+    <string name="premium_value">Faça uma compra única para exportar os relatórios PDF e CSV juntos em um arquivo ZIP.</string>
+    <string name="premium_privacy">A compra e a restauração usam sua conta da Amazon. O Refundavio envia apenas seu ID de usuário da Amazon e o ID do recibo Premium ao servidor, que os verifica com a Amazon. Seus registros ficam no dispositivo.</string>
+    <string name="premium_unavailable">As compras Premium estão indisponíveis no momento.</string>
+    <string name="premium_checking">Verificando com a Amazon…</string>
+    <string name="premium_active">Premium está ativo.</string>
+    <string name="premium_error">Não foi possível verificar o Premium. Confira a conexão e tente restaurar as compras novamente.</string>
+    <string name="premium_no_purchase">Nenhuma compra Premium ativa foi encontrada para esta conta da Amazon.</string>
+    <string name="premium_pending">A Amazon ainda está processando sua compra. Tente restaurá-la mais tarde.</string>
+    <string name="premium_purchase_incomplete">A compra não foi concluída.</string>
+    <string name="premium_buy">Compra única · %1$s</string>
+    <string name="premium_restore">Restaurar compras</string>
+    <string name="premium_report_bundle">Pacote PDF e CSV (Premium)</string>
+</resources>

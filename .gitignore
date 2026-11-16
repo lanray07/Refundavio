@@ -5,6 +5,9 @@ local.properties
 **/build/
 *.jks
 *.keystore
+server/.env
+server/.env.*
+!server/.env.example
 
 # Local build outputs never go into source control.
 deliverables/android/debug/

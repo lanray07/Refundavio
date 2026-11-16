@@ -361,6 +361,11 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
     var reminders by rememberSaveable { mutableStateOf(false) }
     var privacy by rememberSaveable { mutableStateOf(false) }
     var reports by rememberSaveable { mutableStateOf(false) }
+    var premium by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+    val billing = remember(context) { PremiumBilling.get(context) }
+    val premiumState by billing.state.collectAsState()
+    LaunchedEffect(billing) { billing.recoverPreviousPurchase() }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         PageTitle(stringResource(R.string.more), stringResource(R.string.settings_hint))
         AppLanguagePicker()
@@ -377,6 +382,9 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         }
         OutlinedButton(onClick = { reports = true }, modifier = Modifier.fillMaxWidth(), enabled = !demo && cases.isNotEmpty()) {
             Text(stringResource(R.string.reports))
+        }
+        OutlinedButton(onClick = { premium = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(R.string.premium_title))
         }
         OutlinedButton(onClick = openMerchants, modifier = Modifier.fillMaxWidth(), enabled = !demo) {
             Text(stringResource(R.string.merchants))
@@ -396,7 +404,8 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
     }
     if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
     if (reminders) ReminderSettingsDialog { reminders = false }
-    if (reports && !demo) ReportsDialog(cases, today) { reports = false }
+    if (reports && !demo) ReportsDialog(cases, today, premiumState.active) { reports = false }
+    if (premium) PremiumDialog(billing, premiumState) { premium = false }
     if (privacy) PrivacyPolicyDialog { privacy = false }
 }
 
@@ -447,6 +456,8 @@ internal fun PrivacyPolicyDialog(close: () -> Unit) {
                 Text(stringResource(R.string.privacy_policy_text))
                 Spacer(Modifier.height(12.dp))
                 Text(stringResource(R.string.report_privacy))
+                Spacer(Modifier.height(12.dp))
+                Text(stringResource(R.string.premium_privacy))
             }
         },
         confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.close)) } }

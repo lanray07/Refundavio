@@ -2,7 +2,9 @@
 
 Effective 15 November 2026.
 
-Refundavio helps you track purchases, returns, refunds, merchant follow-ups and warranties. You can use it without creating an account. The app stores the records and preferences you enter on your device. The app has no internet permission and contains no analytics or advertising SDK.
+Refundavio helps you track purchases, returns, refunds, merchant follow-ups and warranties. You can use it without creating an account. The app stores the records and preferences you enter on your device. It contains no analytics or advertising SDK.
+
+Optional Premium purchases and restores use your Amazon account. Refundavio sends the Amazon user ID and Premium receipt ID to its verification server, which checks them with Amazon to confirm ownership. The verifier processes those identifiers for the request and does not store them. Your Refundavio records are kept on your device.
 
 When you attach a document, you choose it through your device’s document picker. Refundavio stores a reference to the document and keeps the file with its original provider. The provider and any app you use to open the document handle it under their own privacy policies.
 

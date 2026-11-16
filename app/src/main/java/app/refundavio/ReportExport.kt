@@ -29,10 +29,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.OutputStream
+import java.io.FilterOutputStream
 import java.time.LocalDate
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 internal enum class ReportFormat(val extension: String, val mimeType: String) {
     PDF("pdf", "application/pdf"), CSV("csv", "text/csv"), TXT("txt", "text/plain"),
+    ZIP("zip", "application/zip"),
 }
 
 internal fun exportReport(context: Context, cases: List<CaseSnapshot>, today: LocalDate, format: ReportFormat, output: OutputStream) {
@@ -51,6 +55,17 @@ internal fun exportReport(context: Context, cases: List<CaseSnapshot>, today: Lo
         }
         ReportFormat.PDF -> writeReportPdf(output, reportLines(title, tables, context.getString(R.string.no_cases)),
             context.resources.configuration.layoutDirection == android.view.View.LAYOUT_DIRECTION_RTL)
+        ReportFormat.ZIP -> ZipOutputStream(output).use { archive ->
+            val entryOutput = object : FilterOutputStream(archive) {
+                override fun write(bytes: ByteArray, offset: Int, length: Int) = archive.write(bytes, offset, length)
+                override fun close() = flush()
+            }
+            for (entry in listOf(ReportFormat.PDF, ReportFormat.CSV)) {
+                archive.putNextEntry(ZipEntry("Refundavio-$today.${entry.extension}"))
+                exportReport(context, cases, today, entry, entryOutput)
+                archive.closeEntry()
+            }
+        }
     }
 }
 
@@ -100,7 +115,7 @@ private fun writeReportPdf(output: OutputStream, lines: Sequence<String>, rtl: B
 }
 
 @Composable
-internal fun ReportsDialog(cases: List<CaseSnapshot>, today: LocalDate, close: () -> Unit) {
+internal fun ReportsDialog(cases: List<CaseSnapshot>, today: LocalDate, premium: Boolean, close: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var selected by rememberSaveable { mutableStateOf<ReportFormat?>(null) }
@@ -110,7 +125,8 @@ internal fun ReportsDialog(cases: List<CaseSnapshot>, today: LocalDate, close: (
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { response ->
         val uri = response.data?.data?.takeIf { it.scheme == "content" }
         busy = false
-        if (response.resultCode == android.app.Activity.RESULT_OK && uri != null && format != null) {
+        if (response.resultCode == android.app.Activity.RESULT_OK && uri != null && format != null &&
+            (format != ReportFormat.ZIP || premium)) {
             busy = true
             scope.launch {
                 try {
@@ -141,13 +157,15 @@ internal fun ReportsDialog(cases: List<CaseSnapshot>, today: LocalDate, close: (
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.report_privacy))
                 if (result != 0) Text(stringResource(result))
-                if (format == null) ReportFormat.entries.forEach { choice ->
-                    OutlinedButton(onClick = { selected = choice; result = 0 }, modifier = Modifier.fillMaxWidth()) { Text(choice.name) }
-                } else Text(format.name)
+                if (format == null) ReportFormat.entries.filter { it != ReportFormat.ZIP || premium }.forEach { choice ->
+                    OutlinedButton(onClick = { selected = choice; result = 0 }, modifier = Modifier.fillMaxWidth()) {
+                        Text(if (choice == ReportFormat.ZIP) stringResource(R.string.premium_report_bundle) else choice.name)
+                    }
+                } else Text(if (format == ReportFormat.ZIP) stringResource(R.string.premium_report_bundle) else format.name)
             }
         },
         confirmButton = {
-            if (format != null) Button(enabled = !busy, onClick = {
+            if (format != null) Button(enabled = !busy && (format != ReportFormat.ZIP || premium), onClick = {
                 busy = true
                 try {
                     picker.launch(android.content.Intent(android.content.Intent.ACTION_CREATE_DOCUMENT).apply {

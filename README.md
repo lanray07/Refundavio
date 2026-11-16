@@ -155,6 +155,8 @@ Add an order reference under a purchase’s details. **Order items** shows recor
 
 Open **More → Reports** to save your ledger as PDF, CSV or text. The app asks you to confirm before opening the system file picker. The selected storage provider manages the exported copy. CSV amounts use the currency code shown in each row and a period as the decimal separator. Dates use ISO format.
 
+The 0.2.9 billing integration adds an optional one-time Amazon Premium purchase for saving the PDF and CSV together in one ZIP. **More → Refundavio Premium** shows the price from Amazon and lets previous buyers restore access. See the [verifier setup](server/README.md) and [Fire tablet verification](deliverables/reports/amazon-premium-release.md) for its current rollout status.
+
 To archive a purchase, open its details and select **Archive purchase**. Purchases with an outstanding refund stay active. Archived purchases stop receiving reminders, and confirmed refunds still count toward the received total. Find and restore them under **Purchases → Show → Archived purchases**.
 
 See the [pre-submission review](deliverables/reports/readiness.md) and [screenshot manifest](deliverables/store-assets/screenshots/manifest.csv).

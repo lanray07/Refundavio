@@ -11,15 +11,26 @@ android {
         applicationId = "app.refundavio"
         minSdk = 26
         targetSdk = 35
-        versionCode = 10
-        versionName = "0.2.8"
+        versionCode = 11
+        versionName = "0.2.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildFeatures { compose = true }
+    buildFeatures { compose = true; buildConfig = true }
     sourceSets.getByName("androidTest").assets.srcDir("schemas")
     buildTypes {
         debug {
-            if (providers.gradleProperty("refundavioQa").isPresent) applicationIdSuffix = ".qa"
+            val qa = providers.gradleProperty("refundavioQa").orNull
+            if (qa != null) applicationIdSuffix = if (qa == "billing") ".qa.billing" else ".qa"
+            val sandboxUrl = if (qa != null)
+                "http://127.0.0.1:8765/verify" else ""
+            buildConfigField("String", "PREMIUM_VERIFIER", "\"$sandboxUrl\"")
+        }
+        release {
+            val verifier = providers.gradleProperty("refundavioPremiumVerifier").orElse("").get()
+            require(verifier.isEmpty() || Regex("https://[A-Za-z0-9.-]+(?::[0-9]+)?/[A-Za-z0-9/_-]+").matches(verifier)) {
+                "refundavioPremiumVerifier must be an HTTPS endpoint"
+            }
+            buildConfigField("String", "PREMIUM_VERIFIER", "\"$verifier\"")
         }
     }
     compileOptions {
@@ -30,7 +41,7 @@ android {
     ksp { arg("room.schemaLocation", "$projectDir/schemas") }
 }
 dependencies {
-    debugImplementation("com.amazon.device:amazon-appstore-sdk:3.0.9")
+    implementation("com.amazon.device:amazon-appstore-sdk:3.0.9")
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

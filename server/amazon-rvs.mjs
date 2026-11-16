@@ -9,7 +9,7 @@ export function billingIdentifiers(payload) {
   return { userId, receiptId };
 }
 
-export async function verifyAmazonReceipt({ userId, receiptId }, { sandbox, secret, amazonFetch = fetch }) {
+export async function verifyAmazonReceipt({ userId, receiptId }, { sandbox, lat = false, secret, amazonFetch = fetch }) {
   const [key, user, receipt] = [sandbox ? 'developerSecret' : secret, userId, receiptId].map(encodeURIComponent);
   const host = 'https://appstore-sdk.amazon.com';
   const endpoint = `${host}${sandbox ? '/sandbox' : ''}/version/1.0/verifyReceiptId/developer/${key}/user/${user}/receiptId/${receipt}`;
@@ -18,7 +18,9 @@ export async function verifyAmazonReceipt({ userId, receiptId }, { sandbox, secr
   if (!verified.ok) throw new Error('Amazon receipt verification unavailable');
 
   const result = await verified.json();
-  return result.receiptId === receiptId && result.productId === sku &&
-    result.productType === 'ENTITLED' && result.cancelDate === null &&
-    result.testTransaction === sandbox;
+  // Amazon production RVS can return testTransaction=false for beta purchases.
+  const expectedEnvironment = lat ? result.betaProduct === true :
+    result.testTransaction === sandbox && result.betaProduct !== true;
+  return result.receiptId === receiptId && result.productId === (lat ? `${sku}.lat` : sku) &&
+    result.productType === 'ENTITLED' && result.cancelDate === null && expectedEnvironment;
 }

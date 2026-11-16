@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { once } from 'node:events';
 import test from 'node:test';
 import { createVerifier } from './premium-verifier.mjs';
+import { verifyAmazonReceipt } from './amazon-rvs.mjs';
 
 const sample = { receiptId: 'receipt=1:abc', userId: 'amazon-user' };
 const valid = {
@@ -53,11 +54,29 @@ test('sandbox accepts test receipts through the sandbox endpoint', async () => {
 test('rejects canceled, test, mismatched, and non-entitlement receipts in production', async () => {
   for (const change of [
     { cancelDate: 1 }, { testTransaction: true }, { receiptId: 'other' },
-    { productType: 'CONSUMABLE' }, { productId: 'other' },
+    { productType: 'CONSUMABLE' }, { productId: 'other' }, { betaProduct: true },
   ]) {
     assert.deepEqual(await check({ amazonFetch: async () => Response.json({ ...valid, ...change }) }),
       [200, { active: false }]);
   }
+});
+
+test('private LAT accepts only its beta entitlement from Amazon production RVS', async () => {
+  const beta = { ...valid, productId: 'app.refundavio.premium.lat', betaProduct: true, testTransaction: true };
+  const verify = (body, lat) => verifyAmazonReceipt(sample, {
+    sandbox: false, lat, secret: 'server-test',
+    amazonFetch: async url => {
+      assert.ok(url.startsWith('https://appstore-sdk.amazon.com/version/1.0/'));
+      return Response.json(body);
+    },
+  });
+  assert.equal(await verify(beta, true), true);
+  assert.equal(await verify(beta, false), false);
+  assert.equal(await verify(valid, true), false);
+  assert.equal(await verify({ ...beta, betaProduct: false }, true), false);
+  assert.equal(await verify({ ...beta, testTransaction: false }, true), true);
+  assert.equal(await verify({ ...beta, testTransaction: false }, false), false);
+  assert.equal(await verify({ ...beta, cancelDate: 1 }, true), false);
 });
 
 test('distinguishes invalid receipts from temporary Amazon failures', async () => {

@@ -208,7 +208,7 @@ internal class PremiumBilling private constructor(context: Context) : Purchasing
         receipt.sku == SKU && receipt.productType == ProductType.ENTITLED && !receipt.receiptId.isNullOrBlank()
 
     companion object {
-        private const val SKU = "app.refundavio.premium"
+        private const val SKU = BuildConfig.PREMIUM_SKU
         val configured get() = BuildConfig.PREMIUM_VERIFIER.isNotBlank()
         private var instance: PremiumBilling? = null
         fun get(context: Context): PremiumBilling = instance ?: PremiumBilling(context).also { instance = it }

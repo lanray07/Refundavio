@@ -13,6 +13,7 @@ android {
         targetSdk = 35
         versionCode = 11
         versionName = "0.2.9"
+        buildConfigField("String", "PREMIUM_SKU", "\"app.refundavio.premium\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { compose = true; buildConfig = true }
@@ -26,9 +27,16 @@ android {
             buildConfigField("String", "PREMIUM_VERIFIER", "\"$sandboxUrl\"")
         }
         release {
+            val lat = providers.gradleProperty("refundavioLat").orNull == "true"
             val verifier = providers.gradleProperty("refundavioPremiumVerifier").orElse("").get()
             require(verifier.isEmpty() || Regex("https://[A-Za-z0-9.-]+(?::[0-9]+)?/[A-Za-z0-9/_-]+").matches(verifier)) {
                 "refundavioPremiumVerifier must be an HTTPS endpoint"
+            }
+            if (lat) {
+                require(verifier.endsWith("/verify-lat")) { "The LAT build requires the private test verifier route" }
+                buildConfigField("String", "PREMIUM_SKU", "\"app.refundavio.premium.lat\"")
+            } else {
+                require(!verifier.endsWith("/verify-lat")) { "Public releases must use the public verifier route" }
             }
             buildConfigField("String", "PREMIUM_VERIFIER", "\"$verifier\"")
         }

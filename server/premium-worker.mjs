@@ -6,7 +6,9 @@ function reply(status, body = {}) {
 
 export default {
   async fetch(request, env) {
-    if (request.method !== 'POST' || new URL(request.url).pathname !== '/verify') return reply(404);
+    const route = new URL(request.url).pathname;
+    const lat = route === '/verify-lat';
+    if (request.method !== 'POST' || (!lat && route !== '/verify')) return reply(404);
     if (request.headers.get('Content-Type')?.split(';')[0] !== 'application/json') return reply(415);
     const secret = env.AMAZON_RVS_SHARED_SECRET;
     if (!secret) return reply(503);
@@ -33,9 +35,9 @@ export default {
     }
 
     try {
-      const quota = await env.VERIFICATION_LIMIT.limit({ key: 'refundavio-amazon-rvs' });
+      const quota = await env.VERIFICATION_LIMIT.limit({ key: route });
       if (!quota.success) return reply(429);
-      const active = await verifyAmazonReceipt(ids, { sandbox: false, secret });
+      const active = await verifyAmazonReceipt(ids, { sandbox: false, lat, secret });
       return reply(200, { active });
     } catch {
       return reply(502);

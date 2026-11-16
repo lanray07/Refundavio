@@ -19,7 +19,7 @@ $base = Read-Resources 'values'
 $baseStrings = Map $base.string
 $basePlurals = Map $base.plurals
 foreach ($folder in @('values-es', 'values-fr', 'values-ar', 'values-hi', 'values-de', 'values-it', 'values-ja',
-                      'values-ko', 'values-b+zh+Hans', 'values-b+zh+Hant',
+                      'values-ko', 'values-b+zh+Hans', 'values-b+zh+Hant', 'values-tr', 'values-in',
                       'values-pt-rBR', 'values-nl', 'values-pl', 'values-pt-rPT', 'values-sv')) {
     $current = Read-Resources $folder
     $strings = Map $current.string

@@ -103,6 +103,16 @@ class DashboardJourneyTest {
         }
     }
 
+    @Test fun turkishAndIndonesianResourcesFollowDeviceLocale() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        for ((tag, expected) in mapOf("tr-TR" to "Garantiler", "id-ID" to "Garansi", "in-ID" to "Garansi")) {
+            val config = Configuration(context.resources.configuration).apply {
+                setLocale(Locale.forLanguageTag(tag))
+            }
+            assertEquals(tag, expected, context.createConfigurationContext(config).getString(R.string.warranties))
+        }
+    }
+
     private suspend fun <T> withFixtureLedger(action: suspend (LedgerDb) -> T): T {
         val database = Room.databaseBuilder(ApplicationProvider.getApplicationContext<Context>(),
             LedgerDb::class.java, "refundavio.db").build()

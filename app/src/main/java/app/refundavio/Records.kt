@@ -344,6 +344,8 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
         "fr" to "Français",
         "ar" to "العربية",
         "hi-IN" to "हिन्दी",
+        "tr-TR" to "Türkçe",
+        "id-ID" to "Bahasa Indonesia",
         "de-DE" to "Deutsch",
         "it-IT" to "Italiano",
         "ja-JP" to "日本語",

@@ -4,6 +4,12 @@ The Android app sends an Amazon user ID and receipt ID to `POST /verify`. The se
 
 ## Production configuration
 
+Refundavio uses [Cloudflare Workers](https://developers.cloudflare.com/workers/) for the [production endpoint](https://refundavio-premium-verifier.lanraybanks.workers.dev/verify). The Worker bounds request bodies and rate-limits Amazon calls per Cloudflare location without using a client IP address or identifiers as rate-limit keys. Worker observability is disabled. The Amazon secret is stored as the encrypted Worker secret `AMAZON_RVS_SHARED_SECRET`.
+
+To deploy code updates, run `npx wrangler deploy --config server/wrangler.toml --keep-vars --no-upload-source-maps` from the repository root. Use `npx wrangler secret put AMAZON_RVS_SHARED_SECRET --config server/wrangler.toml` when provisioning or rotating the secret. Build the APK with `gradlew assembleRelease -PrefundavioPremiumVerifier=https://refundavio-premium-verifier.lanraybanks.workers.dev/verify` and sign it with the established Refundavio publisher certificate.
+
+### Standalone Node.js hosting
+
 1. Run the verifier with Node.js 22 or newer. Set the variables shown in [.env.example](.env.example) through the host’s secret configuration. Use the [Amazon RVS production shared secret](https://developer.amazon.com/docs/in-app-purchasing/iap-rvs-setup-prod.html).
 2. Run `node server/premium-verifier.mjs`. It binds to loopback. Put an HTTPS reverse proxy in front of `POST /verify` and apply per-client rate limiting at the proxy. The process also limits concurrent checks and connections from a single peer. Omit request bodies and upstream RVS URLs from proxy and application logs.
 3. Build with `gradlew assembleRelease -PrefundavioPremiumVerifier=https://billing.example.org/verify`. Use the actual endpoint. Release builds without an endpoint show that purchases are unavailable. The Amazon app’s public SDK authentication key is packaged in the app assets. Sign the APK through the established release process.

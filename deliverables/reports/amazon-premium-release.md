@@ -18,4 +18,11 @@ Refundavio 0.2.9 adds the Amazon Appstore SDK to the release build. The app load
 
 The Fire purchase and restore used debuggable QA APKs with the same app UI, billing code and verifier implementation. The fresh purchase was made before the version bump, and the final 0.2.9 QA APK reverified the same transaction on restore. The tablet’s original App Tester catalogue and routing were restored after testing.
 
-The Amazon listing still contains the earlier 0.2.8 APK. The listing and entitlement are both unsubmitted, and export certification is unchecked. See [server configuration](../../server/README.md) for the release deployment and privacy prerequisites.
+## 0.2.9 production deployment and draft upload
+
+- The [production verifier](https://refundavio-premium-verifier.lanraybanks.workers.dev/verify) runs on Cloudflare Workers, version `e0f55507-05b7-47c8-a17a-0b7b05db78d7`. Live HTTPS checks returned 404 for the wrong method, 400 for missing identifiers, 413 for an oversized body, and `200 {"active":false}` for a synthetic invalid receipt sent to production RVS. All four local verifier tests also passed. A valid production purchase receipt remains unverified.
+- The signed APK uses the same publisher certificate as 0.2.8. APK signature schemes v2 and v3 verified, and the APK contains the production endpoint and Amazon's public SDK key. SHA-256 `27A771D9C9BDF8AFF6B7FD39E5CC38DD063B38E16B73945E6DD375D3BFE89C48`.
+- Amazon Review showed `Refundavio-0.2.9-Amazon.apk`, version code 11, DRM disabled, and the 12 selected Fire tablets. The existing reviewer instructions were present.
+- The Amazon privacy questionnaire was saved and reloaded to confirm User IDs and Purchase history for app functionality and fraud prevention/security. Amazon processes the purchase and verification. The primary app listing and one-time Premium entitlement both show **Ready to Submit**, and export certification was left unchecked in the review tab.
+
+See [server configuration](../../server/README.md) for reproducible deployment steps.

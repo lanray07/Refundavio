@@ -30,8 +30,9 @@ async function check({ sandbox = false, payload = sample, amazonFetch }) {
 
 test('production verifies the expected entitlement using the server secret', async () => {
   const reply = await check({
-    amazonFetch: async url => {
+    amazonFetch: async (url, init) => {
       assert.equal(url, 'https://appstore-sdk.amazon.com/version/1.0/verifyReceiptId/developer/server%3Atest%3D/user/amazon-user/receiptId/receipt%3D1%3Aabc');
+      assert.equal(init.redirect, 'manual');
       return Response.json(valid);
     },
   });
@@ -61,6 +62,8 @@ test('rejects canceled, test, mismatched, and non-entitlement receipts in produc
 
 test('distinguishes invalid receipts from temporary Amazon failures', async () => {
   assert.deepEqual(await check({ amazonFetch: async () => new Response('', { status: 400 }) }), [200, { active: false }]);
+  assert.deepEqual(await check({ amazonFetch: async () => new Response('', { status: 497 }) }), [200, { active: false }]);
+  assert.deepEqual(await check({ amazonFetch: async () => new Response('', { status: 302 }) }), [502, {}]);
   assert.deepEqual(await check({ amazonFetch: async () => new Response('', { status: 503 }) }), [502, {}]);
   assert.deepEqual(await check({ payload: { ...sample, userId: '..' } }), [400, {}]);
   assert.throws(() => createVerifier({ sandbox: false }), /AMAZON_RVS_SHARED_SECRET/);

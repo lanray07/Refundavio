@@ -1,12 +1,9 @@
 import { createServer } from 'node:http';
 import { pathToFileURL } from 'node:url';
-
-const sku = 'app.refundavio.premium';
-const identifier = /^[A-Za-z0-9_=+:/.-]{1,2048}$/;
+import { billingIdentifiers, verifyAmazonReceipt } from './amazon-rvs.mjs';
 
 export function createVerifier({ sandbox, secret, amazonFetch = fetch }) {
   if (!sandbox && !secret) throw new Error('Set AMAZON_RVS_SHARED_SECRET for production');
-  const host = 'https://appstore-sdk.amazon.com';
   const requests = new Map();
   let nextCleanup = 0;
   let inFlight = 0;
@@ -56,21 +53,10 @@ export function createVerifier({ sandbox, secret, amazonFetch = fetch }) {
       } catch {
         return send(400, {});
       }
-      const { userId, receiptId } = payload ?? {};
-      if (typeof userId !== 'string' || typeof receiptId !== 'string' ||
-          !identifier.test(userId) || !identifier.test(receiptId) ||
-          [userId, receiptId].some(value => value === '.' || value === '..')) return send(400, {});
-
-      const [key, user, receipt] = [sandbox ? 'developerSecret' : secret, userId, receiptId].map(encodeURIComponent);
-      const endpoint = `${host}${sandbox ? '/sandbox' : ''}/version/1.0/verifyReceiptId/developer/${key}/user/${user}/receiptId/${receipt}`;
-      const verified = await amazonFetch(endpoint, { redirect: 'error', signal: AbortSignal.timeout(8000) });
-      if ([400, 410].includes(verified.status)) return send(200, { active: false });
-      if (!verified.ok) return send(502, {});
-
-      const result = await verified.json();
-      return send(200, { active: result.receiptId === receiptId && result.productId === sku &&
-        result.productType === 'ENTITLED' && result.cancelDate === null &&
-        result.testTransaction === sandbox });
+      const ids = billingIdentifiers(payload);
+      if (!ids) return send(400, {});
+      const active = await verifyAmazonReceipt(ids, { sandbox, secret, amazonFetch });
+      return send(200, { active });
     } catch {
       return send(502, {});
     } finally {

@@ -1,0 +1,13 @@
+name = "refundavio-premium-verifier"
+main = "premium-worker.mjs"
+compatibility_date = "2026-07-01"
+workers_dev = true
+preview_urls = false
+
+[observability]
+enabled = false
+
+[[ratelimits]]
+name = "VERIFICATION_LIMIT"
+namespace_id = "927421"
+simple = { limit = 120, period = 60 }

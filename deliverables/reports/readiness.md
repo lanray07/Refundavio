@@ -63,4 +63,4 @@ Amazon saved the signed **0.2.8** APK as version code 10. The draft still target
 
 **Submission status: FAIL against the full master prompt.**
 
-The local 0.2.9 candidate adds the customer purchase and restore flow, the Premium report bundle, and server-side receipt verification. The integrated flow passed on the Fire tablet with Amazon App Tester. Production verifier deployment and a production-mode checkout remain open. [0.2.9 billing verification](amazon-premium-release.md)
+The signed 0.2.9 candidate in the Amazon draft adds the customer purchase and restore flow, the Premium report bundle, and server-side receipt verification. The integrated flow passed on the Fire tablet with Amazon App Tester. The deployed HTTPS verifier rejected an invalid receipt through production RVS. A successful production-mode checkout remains open. [0.2.9 billing verification](amazon-premium-release.md)

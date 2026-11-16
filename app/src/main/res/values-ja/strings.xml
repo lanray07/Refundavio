@@ -158,4 +158,14 @@
     <string name="sample_mug">"陶器のトラベルマグ"</string>
     <string name="sample_gloves">"サイクリンググローブ"</string>
     <string name="sample_scanner">"コンパクトスキャナー"</string>
+    <string name="reports">レポート</string>
+    <string name="report_section">セクション</string>
+    <string name="report_record">記録ID</string>
+    <string name="report_privacy">このレポートには購入、返金、連絡に関する個人の記録が含まれます。信頼できる場所にのみ保存してください。保存したコピーは選択した保存先の提供元が管理します。</string>
+    <string name="report_saved">レポートを保存しました。</string>
+    <string name="report_error">レポートを保存できませんでした。</string>
+    <string name="active_purchases">現在の購入記録</string>
+    <string name="archived_purchases">アーカイブ済みの購入記録</string>
+    <string name="archive_purchase">購入記録をアーカイブ</string>
+    <string name="restore_purchase">購入記録を復元</string>
 </resources>

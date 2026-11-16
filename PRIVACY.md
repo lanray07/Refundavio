@@ -10,6 +10,8 @@ Voice shortcuts are optional. If you tap **Speak**, the speech recognition servi
 
 Reminder notifications use generic text. When you copy a draft, Refundavio puts the selected text on your device’s clipboard so you can paste it into an app of your choice.
 
+If you choose to export a report, it can contain private purchase records, refund amounts and merchant contact notes. Refundavio asks you to confirm the export and choose a destination through your device’s file picker. The storage provider you choose controls the saved copy under its own privacy policy. Deleting records in Refundavio does not delete copies you exported.
+
 Your purchase records stay on the device until you delete them. To remove those records and their refund and contact history, open **More → Erase all purchase data**. To remove preferences and all other app data, use your device’s app storage settings to clear Refundavio’s data, or uninstall it. Files you attached remain with their document provider.
 
 For questions, contact the project through its GitHub issue tracker. Issues are public, so leave out receipts, order numbers, account details and other personal information. [Refundavio support](https://github.com/lanray07/Refundavio/issues)

@@ -164,4 +164,14 @@
     <string name="sample_mug">"Taza de viaje de cerámica"</string>
     <string name="sample_gloves">"Guantes de ciclismo"</string>
     <string name="sample_scanner">"Escáner compacto"</string>
+    <string name="reports">Informes</string>
+    <string name="report_section">Sección</string>
+    <string name="report_record">ID del registro</string>
+    <string name="report_privacy">Este informe incluye registros privados de compras, reembolsos y contactos. Guárdalo solo en una ubicación de confianza. El proveedor de almacenamiento elegido controla la copia guardada.</string>
+    <string name="report_saved">Informe guardado.</string>
+    <string name="report_error">No se pudo guardar el informe.</string>
+    <string name="active_purchases">Compras activas</string>
+    <string name="archived_purchases">Compras archivadas</string>
+    <string name="archive_purchase">Archivar compra</string>
+    <string name="restore_purchase">Restaurar compra</string>
 </resources>

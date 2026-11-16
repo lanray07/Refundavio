@@ -158,4 +158,14 @@
     <string name="sample_mug">陶瓷随行杯</string>
     <string name="sample_gloves">骑行手套</string>
     <string name="sample_scanner">便携式扫描仪</string>
+    <string name="reports">报告</string>
+    <string name="report_section">部分</string>
+    <string name="report_record">记录编号</string>
+    <string name="report_privacy">此报告包含私密的购物、退款和联系记录。请仅保存到您信任的位置。保存的副本由您选择的存储服务提供方管理。</string>
+    <string name="report_saved">报告已保存。</string>
+    <string name="report_error">无法保存报告。</string>
+    <string name="active_purchases">当前购物记录</string>
+    <string name="archived_purchases">已归档购物记录</string>
+    <string name="archive_purchase">归档购物记录</string>
+    <string name="restore_purchase">恢复购物记录</string>
 </resources>

@@ -24,7 +24,8 @@ data class RecoveryCase(
     val expected: Long, val stage: Stage, val deadline: LocalDate? = null,
     val followUp: LocalDate? = null, val note: String = "", val warranty: LocalDate? = null,
     val purchaseAmount: Long? = null, val purchaseDate: LocalDate? = null, val orderReference: String = "",
-    val carrier: String = "", val tracking: String = "", val attachment: String? = null
+    val carrier: String = "", val tracking: String = "", val attachment: String? = null,
+    val archived: Boolean = false,
 )
 data class Receipt(val id: Long = 0, val amount: Long, val day: LocalDate)
 data class Contact(val id: Long = 0, val day: LocalDate, val note: String)
@@ -54,9 +55,9 @@ data class Dashboard(
 ) {
     companion object {
         fun from(cases: List<CaseSnapshot>, today: LocalDate): Dashboard {
-            val pending = cases.filter { it.outstanding.signum() > 0 }
+            val pending = cases.filter { !it.record.archived && it.outstanding.signum() > 0 }
                 .sortedWith(compareBy<CaseSnapshot> { it.record.followUp ?: LocalDate.MAX }.thenBy { it.record.id })
-            val active = cases.filter { !it.stage.terminal }
+            val active = cases.filter { !it.record.archived && !it.stage.terminal }
             val returns = active.filter { it.stage.canDispatch && it.record.deadline != null }
                 .sortedWith(compareBy<CaseSnapshot> { it.record.deadline!!.isBefore(today) }
                     .thenBy { if (it.record.deadline!!.isBefore(today)) -it.record.deadline.toEpochDay() else it.record.deadline.toEpochDay() }
@@ -71,10 +72,12 @@ data class Dashboard(
                 pending, returns, followUps,
                 active.filter { it.stage.awaitingDispatch },
                 active.filter { it.stage == Stage.REQUESTED },
-                cases.filter { it.stage == Stage.REFUNDED && it.receipts.isNotEmpty() }
+                cases.filter { !it.record.archived && it.stage == Stage.REFUNDED && it.receipts.isNotEmpty() }
                     .sortedWith(compareByDescending<CaseSnapshot> { it.receipts.maxOf { receipt -> receipt.day } }.thenByDescending { it.record.id })
                     .take(5),
-                cases.filter { it.record.warranty?.let { date -> !date.isBefore(today) && !date.isAfter(today.plusDays(30)) } == true }
+                cases.filter { !it.record.archived && it.record.warranty?.let { date ->
+                    !date.isBefore(today) && !date.isAfter(today.plusDays(30))
+                } == true }
                     .sortedBy { it.record.warranty },
                 totals(pending) { it.outstanding }, totals(cases) { it.received }
             )

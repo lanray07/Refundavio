@@ -161,4 +161,14 @@
     <string name="sample_mug">Seramik seyahat kupası</string>
     <string name="sample_gloves">Bisiklet eldiveni</string>
     <string name="sample_scanner">Kompakt tarayıcı</string>
+    <string name="reports">Raporlar</string>
+    <string name="report_section">Bölüm</string>
+    <string name="report_record">Kayıt kimliği</string>
+    <string name="report_privacy">Bu rapor özel alışveriş, para iadesi ve iletişim kayıtları içerir. Yalnızca güvenilir bir konuma kaydedin. Kaydedilen kopyayı seçtiğiniz depolama sağlayıcısı yönetir.</string>
+    <string name="report_saved">Rapor kaydedildi.</string>
+    <string name="report_error">Rapor kaydedilemedi.</string>
+    <string name="active_purchases">Etkin alışverişler</string>
+    <string name="archived_purchases">Arşivlenen alışverişler</string>
+    <string name="archive_purchase">Alışverişi arşivle</string>
+    <string name="restore_purchase">Alışverişi geri yükle</string>
 </resources>

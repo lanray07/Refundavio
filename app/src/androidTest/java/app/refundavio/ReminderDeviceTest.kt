@@ -54,7 +54,7 @@ class ReminderDeviceTest {
         File(context.filesDir, "reminder-test-trigger.txt").writeText(alarm.toString())
     }
 
-    @Test fun versionOneLedgerKeepsItsCasesAfterReminderMigration() = runBlocking {
+    @Test fun versionOneLedgerKeepsItsCasesAfterReminderAndArchiveMigrations() = runBlocking {
         val name = "migration-reminder-test.db"
         context.deleteDatabase(name)
         try {
@@ -91,9 +91,15 @@ class ReminderDeviceTest {
                 })
             }
             val upgraded = Room.databaseBuilder(context, LedgerDb::class.java, name)
-                .addMigrations(LedgerDb.remindersMigration).build()
+                .addMigrations(LedgerDb.remindersMigration, LedgerDb.archiveMigration).build()
             try {
                 assertEquals("V1 item", upgraded.ledger().get(42)?.row?.item)
+                assertEquals(false, upgraded.ledger().get(42)?.row?.archived)
+                upgraded.ledger().setArchived(42, true)
+                assertEquals(true, upgraded.ledger().get(42)?.row?.archived)
+                assertTrue(upgraded.ledger().reminderCases().isEmpty())
+                upgraded.ledger().setArchived(42, false)
+                assertEquals(42L, upgraded.ledger().reminderCases().single().row.id)
                 val history = ReminderHistory(42, ReminderKind.DEADLINE.name, 20_000, 19_999)
                 upgraded.ledger().markReminders(listOf(history))
                 assertEquals(listOf(history), upgraded.ledger().reminderHistory())

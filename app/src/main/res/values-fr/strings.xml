@@ -164,4 +164,14 @@
     <string name="sample_mug">"Tasse de voyage en céramique"</string>
     <string name="sample_gloves">"Gants de cyclisme"</string>
     <string name="sample_scanner">"Scanner compact"</string>
+    <string name="reports">Rapports</string>
+    <string name="report_section">Section</string>
+    <string name="report_record">Identifiant</string>
+    <string name="report_privacy">Ce rapport contient des données privées sur vos achats, remboursements et contacts. Enregistrez-le dans un emplacement de confiance. Le fournisseur de stockage choisi gère la copie enregistrée.</string>
+    <string name="report_saved">Rapport enregistré.</string>
+    <string name="report_error">Le rapport n’a pas pu être enregistré.</string>
+    <string name="active_purchases">Achats actifs</string>
+    <string name="archived_purchases">Achats archivés</string>
+    <string name="archive_purchase">Archiver l’achat</string>
+    <string name="restore_purchase">Restaurer l’achat</string>
 </resources>

@@ -161,4 +161,14 @@
     <string name="sample_mug">सिरेमिक ट्रैवल मग</string>
     <string name="sample_gloves">साइकिल चलाने के दस्ताने</string>
     <string name="sample_scanner">कॉम्पैक्ट स्कैनर</string>
+    <string name="reports">रिपोर्ट</string>
+    <string name="report_section">अनुभाग</string>
+    <string name="report_record">रिकॉर्ड आईडी</string>
+    <string name="report_privacy">इस रिपोर्ट में खरीदारी, रिफ़ंड और संपर्क के निजी रिकॉर्ड हैं। इसे भरोसेमंद जगह पर ही सेव करें। सेव की गई कॉपी आपके चुने हुए स्टोरेज प्रदाता के नियंत्रण में रहती है।</string>
+    <string name="report_saved">रिपोर्ट सेव हो गई।</string>
+    <string name="report_error">रिपोर्ट सेव नहीं हो सकी।</string>
+    <string name="active_purchases">सक्रिय खरीदारी</string>
+    <string name="archived_purchases">संग्रहीत खरीदारी</string>
+    <string name="archive_purchase">खरीद को संग्रह में रखें</string>
+    <string name="restore_purchase">खरीद वापस लाएँ</string>
 </resources>

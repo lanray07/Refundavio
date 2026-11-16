@@ -161,4 +161,14 @@
     <string name="sample_mug">"Keramisk resemugg"</string>
     <string name="sample_gloves">"Cykelhandskar"</string>
     <string name="sample_scanner">"Kompakt skanner"</string>
+    <string name="reports">Rapporter</string>
+    <string name="report_section">Avsnitt</string>
+    <string name="report_record">Post-ID</string>
+    <string name="report_privacy">Rapporten innehåller privata uppgifter om köp, återbetalningar och kontakter. Spara den bara på en plats du litar på. Den valda lagringsleverantören hanterar den sparade kopian.</string>
+    <string name="report_saved">Rapporten har sparats.</string>
+    <string name="report_error">Rapporten kunde inte sparas.</string>
+    <string name="active_purchases">Aktiva köp</string>
+    <string name="archived_purchases">Arkiverade köp</string>
+    <string name="archive_purchase">Arkivera köp</string>
+    <string name="restore_purchase">Återställ köp</string>
 </resources>

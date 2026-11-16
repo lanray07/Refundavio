@@ -158,4 +158,14 @@
     <string name="sample_mug">휴대용 세라믹 머그</string>
     <string name="sample_gloves">자전거 장갑</string>
     <string name="sample_scanner">소형 스캐너</string>
+    <string name="reports">보고서</string>
+    <string name="report_section">섹션</string>
+    <string name="report_record">기록 ID</string>
+    <string name="report_privacy">이 보고서에는 개인 구매, 환불 및 연락 기록이 포함됩니다. 신뢰할 수 있는 위치에만 저장하세요. 저장된 사본은 선택한 저장소 제공업체에서 관리합니다.</string>
+    <string name="report_saved">보고서를 저장했습니다.</string>
+    <string name="report_error">보고서를 저장할 수 없습니다.</string>
+    <string name="active_purchases">진행 중인 구매</string>
+    <string name="archived_purchases">보관된 구매</string>
+    <string name="archive_purchase">구매 내역 보관</string>
+    <string name="restore_purchase">구매 내역 복원</string>
 </resources>

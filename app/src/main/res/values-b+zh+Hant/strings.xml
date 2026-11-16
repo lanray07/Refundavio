@@ -158,4 +158,14 @@
     <string name="sample_mug">陶瓷隨行杯</string>
     <string name="sample_gloves">單車手套</string>
     <string name="sample_scanner">小型掃描器</string>
+    <string name="reports">報表</string>
+    <string name="report_section">區段</string>
+    <string name="report_record">紀錄編號</string>
+    <string name="report_privacy">此報表包含私人的購物、退款和聯絡紀錄。請只儲存到您信任的位置。儲存的副本由您選擇的儲存空間提供者管理。</string>
+    <string name="report_saved">報表已儲存。</string>
+    <string name="report_error">無法儲存報表。</string>
+    <string name="active_purchases">目前的購物紀錄</string>
+    <string name="archived_purchases">已封存購物紀錄</string>
+    <string name="archive_purchase">封存購物紀錄</string>
+    <string name="restore_purchase">還原購物紀錄</string>
 </resources>

@@ -173,4 +173,14 @@
     <string name="sample_mug">"كوب سفر خزفي"</string>
     <string name="sample_gloves">"قفازات ركوب الدراجات"</string>
     <string name="sample_scanner">"ماسح ضوئي صغير"</string>
+    <string name="reports">التقارير</string>
+    <string name="report_section">القسم</string>
+    <string name="report_record">معرّف السجل</string>
+    <string name="report_privacy">يتضمن هذا التقرير سجلات خاصة بالمشتريات والمبالغ المستردة والتواصل. احفظه في مكان تثق به. يتحكم مزود التخزين الذي تختاره في النسخة المحفوظة.</string>
+    <string name="report_saved">تم حفظ التقرير.</string>
+    <string name="report_error">تعذّر حفظ التقرير.</string>
+    <string name="active_purchases">المشتريات النشطة</string>
+    <string name="archived_purchases">المشتريات المؤرشفة</string>
+    <string name="archive_purchase">أرشفة عملية الشراء</string>
+    <string name="restore_purchase">استعادة عملية الشراء</string>
 </resources>

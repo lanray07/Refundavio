@@ -167,4 +167,14 @@
     <string name="sample_mug">"Ceramiczny kubek podróżny"</string>
     <string name="sample_gloves">"Rękawiczki rowerowe"</string>
     <string name="sample_scanner">"Kompaktowy skaner"</string>
+    <string name="reports">Raporty</string>
+    <string name="report_section">Sekcja</string>
+    <string name="report_record">Identyfikator rekordu</string>
+    <string name="report_privacy">Raport zawiera prywatne dane o zakupach, zwrotach pieniędzy i kontaktach. Zapisz go tylko w zaufanym miejscu. Wybrany dostawca pamięci zarządza zapisaną kopią.</string>
+    <string name="report_saved">Raport zapisany.</string>
+    <string name="report_error">Nie udało się zapisać raportu.</string>
+    <string name="active_purchases">Aktywne zakupy</string>
+    <string name="archived_purchases">Zarchiwizowane zakupy</string>
+    <string name="archive_purchase">Archiwizuj zakup</string>
+    <string name="restore_purchase">Przywróć zakup</string>
 </resources>

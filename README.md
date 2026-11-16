@@ -94,6 +94,18 @@ Refundavio is a native Android return and refund tracker designed for phones and
 | --- | --- | --- |
 | ![Refundavio 繁體中文總覽顯示各幣別的待退款金額、已收到的退款、退貨期限和商家追蹤事項。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-01-refund-tracker.png) | ![繁體中文退貨清單列出等待寄出的商品，以及已部分退款或全額退款的購物紀錄。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-02-return-deadlines.png) | ![繁體中文保固畫面顯示一部範例小型掃描器及其保固到期日。](deliverables/store-assets/screenshots/refundavio-zh-hant-fire-tablet-03-warranty-expiry.png) |
 
+### Türkçe
+
+| Para iadesi takibi | Son iade tarihleri | Garanti bitiş tarihleri |
+| --- | --- | --- |
+| ![Refundavio Türkçe genel bakışında para birimine göre bekleyen ve alınan para iadeleri, son iade tarihleri ve satıcı takipleri yer alıyor.](deliverables/store-assets/screenshots/refundavio-tr-tr-fire-tablet-01-refund-tracker.png) | ![Türkçe iade listesinde gönderim bekleyen alışverişlerle kısmen veya tamamen iade edilen ödemeler gösteriliyor.](deliverables/store-assets/screenshots/refundavio-tr-tr-fire-tablet-02-return-deadlines.png) | ![Türkçe garanti ekranında örnek bir kompakt tarayıcı ve garanti bitiş tarihi gösteriliyor.](deliverables/store-assets/screenshots/refundavio-tr-tr-fire-tablet-03-warranty-expiry.png) |
+
+### Bahasa Indonesia
+
+| Pelacakan pengembalian dana | Batas waktu retur | Masa berlaku garansi |
+| --- | --- | --- |
+| ![Dasbor Refundavio berbahasa Indonesia menampilkan pengembalian dana tertunda dan diterima per mata uang, batas waktu retur, dan tindak lanjut penjual.](deliverables/store-assets/screenshots/refundavio-id-id-fire-tablet-01-refund-tracker.png) | ![Daftar retur berbahasa Indonesia menunjukkan barang yang menunggu pengiriman serta pembelian dengan pengembalian dana sebagian atau penuh.](deliverables/store-assets/screenshots/refundavio-id-id-fire-tablet-02-return-deadlines.png) | ![Layar garansi berbahasa Indonesia menampilkan contoh pemindai ringkas dan tanggal berakhirnya garansi.](deliverables/store-assets/screenshots/refundavio-id-id-fire-tablet-03-warranty-expiry.png) |
+
 ## Run and build
 
 Install JDK 17 and Android SDK Platform 35 with Build Tools 35.0.0. Set `ANDROID_HOME` to the SDK directory or set `sdk.dir` in an untracked `local.properties`. The first build requires access to Google Maven and Maven Central. No credentials, backend, or `.env` file are required.
@@ -128,6 +140,14 @@ pwsh -File scripts/test-closed-reminders.ps1
 - For your own data, tap **Add purchase**. Record the item, merchant, expected refund and relevant status or dates. Return deadlines are entered by you.
 - Open a pending refund and choose **Record a refund received** to record each confirmed payment. Open a merchant follow-up to log contact, move the date, or prepare an editable draft you can copy. The app does not contact merchants.
 - Return records stay separate by currency. No exchange rates are assumed. Closed, cancelled and rejected cases stop contributing to the outstanding amount; confirmed payments remain in received totals. Removing an incorrect payment recalculates the balance.
+
+## Reports and purchase archive
+
+Open **More → Reports** to save your ledger as PDF, CSV or text. The app asks you to confirm before opening the system file picker. The selected storage provider manages the exported copy. CSV amounts use the currency code shown in each row and a period as the decimal separator. Dates use ISO format.
+
+To archive a purchase, open its details and select **Archive purchase**. Purchases with an outstanding refund stay active. Archived purchases stop receiving reminders, and confirmed refunds still count toward the received total. Find and restore them under **Purchases → Show → Archived purchases**.
+
+See the [pre-submission review](deliverables/reports/readiness.md) and [screenshot manifest](deliverables/store-assets/screenshots/manifest.csv).
 
 ## Architecture
 

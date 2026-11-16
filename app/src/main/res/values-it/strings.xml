@@ -161,4 +161,14 @@
     <string name="sample_mug">"Tazza da viaggio in ceramica"</string>
     <string name="sample_gloves">"Guanti da ciclismo"</string>
     <string name="sample_scanner">"Scanner compatto"</string>
+    <string name="reports">Report</string>
+    <string name="report_section">Sezione</string>
+    <string name="report_record">ID record</string>
+    <string name="report_privacy">Il report contiene dati privati su acquisti, rimborsi e contatti. Salvalo solo in una posizione di fiducia. Il fornitore di archiviazione scelto gestisce la copia salvata.</string>
+    <string name="report_saved">Report salvato.</string>
+    <string name="report_error">Impossibile salvare il report.</string>
+    <string name="active_purchases">Acquisti attivi</string>
+    <string name="archived_purchases">Acquisti archiviati</string>
+    <string name="archive_purchase">Archivia acquisto</string>
+    <string name="restore_purchase">Ripristina acquisto</string>
 </resources>

@@ -65,4 +65,14 @@ class RecoveryTest {
         val data = Dashboard.from(listOf(record(1, Long.MAX_VALUE), record(2, Long.MAX_VALUE)), today)
         assertEquals(BigDecimal("18446744073709551614"), data.outstanding.getValue("GBP"))
     }
+
+    @Test fun archiveKeepsReceivedTotalsAndHidesActionQueues() {
+        val completed = record(1, 100, Stage.PROCESSING, payments = longArrayOf(100))
+        val warranty = record(2, 0, Stage.NOT_REQUESTED, deadline = 2)
+        val dashboard = Dashboard.from(listOf(completed.copy(record = completed.record.copy(archived = true)),
+            warranty.copy(record = warranty.record.copy(archived = true, warranty = today.plusDays(2)))), today)
+
+        assertEquals(mapOf("GBP" to BigDecimal(100)), dashboard.received)
+        assertTrue(dashboard.recent.isEmpty() && dashboard.returns.isEmpty() && dashboard.warranties.isEmpty())
+    }
 }

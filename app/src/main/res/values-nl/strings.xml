@@ -161,4 +161,14 @@
     <string name="sample_mug">"Keramische reisbeker"</string>
     <string name="sample_gloves">"Fietshandschoenen"</string>
     <string name="sample_scanner">"Compacte scanner"</string>
+    <string name="reports">Rapporten</string>
+    <string name="report_section">Sectie</string>
+    <string name="report_record">Record-ID</string>
+    <string name="report_privacy">Dit rapport bevat privégegevens over aankopen, terugbetalingen en contacten. Sla het alleen op een vertrouwde locatie op. De gekozen opslagprovider beheert de opgeslagen kopie.</string>
+    <string name="report_saved">Rapport opgeslagen.</string>
+    <string name="report_error">Rapport kon niet worden opgeslagen.</string>
+    <string name="active_purchases">Actieve aankopen</string>
+    <string name="archived_purchases">Gearchiveerde aankopen</string>
+    <string name="archive_purchase">Aankoop archiveren</string>
+    <string name="restore_purchase">Aankoop herstellen</string>
 </resources>

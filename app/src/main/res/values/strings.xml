@@ -161,4 +161,14 @@
     <string name="sample_mug">"Ceramic travel mug"</string>
     <string name="sample_gloves">"Cycling gloves"</string>
     <string name="sample_scanner">"Compact scanner"</string>
+    <string name="reports">Reports</string>
+    <string name="report_section">Section</string>
+    <string name="report_record">Record ID</string>
+    <string name="report_privacy">This report includes private purchase, refund and contact records. Save only to a location you trust. Your selected storage provider controls the saved copy.</string>
+    <string name="report_saved">Report saved.</string>
+    <string name="report_error">The report could not be saved.</string>
+    <string name="active_purchases">Active purchases</string>
+    <string name="archived_purchases">Archived purchases</string>
+    <string name="archive_purchase">Archive purchase</string>
+    <string name="restore_purchase">Restore purchase</string>
 </resources>

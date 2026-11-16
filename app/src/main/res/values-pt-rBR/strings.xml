@@ -161,4 +161,14 @@
     <string name="sample_mug">"Caneca de viagem de cerâmica"</string>
     <string name="sample_gloves">"Luvas de ciclismo"</string>
     <string name="sample_scanner">"Scanner compacto"</string>
+    <string name="reports">Relatórios</string>
+    <string name="report_section">Seção</string>
+    <string name="report_record">ID do registro</string>
+    <string name="report_privacy">Este relatório contém registros privados de compras, reembolsos e contatos. Salve apenas em um local confiável. O provedor de armazenamento escolhido gerencia a cópia salva.</string>
+    <string name="report_saved">Relatório salvo.</string>
+    <string name="report_error">Não foi possível salvar o relatório.</string>
+    <string name="active_purchases">Compras ativas</string>
+    <string name="archived_purchases">Compras arquivadas</string>
+    <string name="archive_purchase">Arquivar compra</string>
+    <string name="restore_purchase">Restaurar compra</string>
 </resources>

@@ -161,4 +161,14 @@
     <string name="sample_mug">"Keramik-Reisebecher"</string>
     <string name="sample_gloves">"Fahrradhandschuhe"</string>
     <string name="sample_scanner">"Kompaktscanner"</string>
+    <string name="reports">Berichte</string>
+    <string name="report_section">Abschnitt</string>
+    <string name="report_record">Datensatz-ID</string>
+    <string name="report_privacy">Dieser Bericht enthält private Kauf-, Erstattungs- und Kontaktdaten. Speichere ihn nur an einem vertrauenswürdigen Ort. Der gewählte Speicheranbieter verwaltet die gespeicherte Kopie.</string>
+    <string name="report_saved">Bericht gespeichert.</string>
+    <string name="report_error">Der Bericht konnte nicht gespeichert werden.</string>
+    <string name="active_purchases">Aktive Käufe</string>
+    <string name="archived_purchases">Archivierte Käufe</string>
+    <string name="archive_purchase">Kauf archivieren</string>
+    <string name="restore_purchase">Kauf wiederherstellen</string>
 </resources>

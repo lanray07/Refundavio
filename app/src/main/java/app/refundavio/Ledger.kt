@@ -19,15 +19,15 @@ data class CaseRow(
     val currency: String, val expected: Long, val stage: String, val deadline: Long?,
     val followUp: Long?, val note: String, val warranty: Long?, val purchaseAmount: Long?,
     val purchaseDate: Long?, val orderReference: String, val carrier: String, val tracking: String,
-    val attachment: String?
+    val attachment: String?, @ColumnInfo(defaultValue = "0") val archived: Boolean = false,
 ) {
     fun domain() = RecoveryCase(id, item, merchant, currency, expected, Stage.valueOf(stage), deadline?.let(LocalDate::ofEpochDay),
         followUp?.let(LocalDate::ofEpochDay), note, warranty?.let(LocalDate::ofEpochDay), purchaseAmount,
-        purchaseDate?.let(LocalDate::ofEpochDay), orderReference, carrier, tracking, attachment)
+        purchaseDate?.let(LocalDate::ofEpochDay), orderReference, carrier, tracking, attachment, archived)
     companion object {
         fun from(c: RecoveryCase) = CaseRow(c.id, c.item, c.merchant, c.currency, c.expected, c.stage.name,
             c.deadline?.toEpochDay(), c.followUp?.toEpochDay(), c.note, c.warranty?.toEpochDay(), c.purchaseAmount,
-            c.purchaseDate?.toEpochDay(), c.orderReference, c.carrier, c.tracking, c.attachment)
+            c.purchaseDate?.toEpochDay(), c.orderReference, c.carrier, c.tracking, c.attachment, c.archived)
     }
 }
 
@@ -75,7 +75,8 @@ interface LedgerDao {
     @Query("DELETE FROM cases WHERE id = :id") suspend fun remove(id: Long)
     @Query("DELETE FROM cases") suspend fun erase()
     @Query("UPDATE cases SET followUp = :date WHERE id = :id") suspend fun followUp(id: Long, date: Long?)
-    @Transaction @Query("SELECT * FROM cases WHERE deadline IS NOT NULL OR followUp IS NOT NULL")
+    @Query("UPDATE cases SET archived = :archived WHERE id = :id") suspend fun setArchived(id: Long, archived: Boolean)
+    @Transaction @Query("SELECT * FROM cases WHERE archived = 0 AND (deadline IS NOT NULL OR followUp IS NOT NULL)")
     suspend fun reminderCases(): List<Joined>
     @Query("SELECT * FROM reminder_history") suspend fun reminderHistory(): List<ReminderHistory>
     @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun markReminders(history: List<ReminderHistory>)
@@ -83,7 +84,7 @@ interface LedgerDao {
 }
 
 @Database(entities = [CaseRow::class, ReceiptRow::class, ContactRow::class, ReminderHistory::class],
-    version = 2, exportSchema = true)
+    version = 3, exportSchema = true)
 abstract class LedgerDb : RoomDatabase() {
     abstract fun ledger(): LedgerDao
 
@@ -99,9 +100,15 @@ abstract class LedgerDb : RoomDatabase() {
             }
         }
 
+        internal val archiveMigration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE cases ADD COLUMN archived INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         fun open(context: Context): LedgerDb = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(context.applicationContext, LedgerDb::class.java, "refundavio.db")
-                .addMigrations(remindersMigration).build().also { instance = it }
+                .addMigrations(remindersMigration, archiveMigration).build().also { instance = it }
         }
     }
 }
@@ -137,8 +144,9 @@ class LedgerModel(application: Application) : AndroidViewModel(application) {
                     require(c.item.isNotBlank() && c.merchant.isNotBlank() && c.expected >= 0 && Money.valid(c.currency))
                     if (c.id == 0L) dao.insert(CaseRow.from(c)) else {
                         val old = requireNotNull(dao.get(c.id))
+                        require(!old.row.archived)
                         require(old.receipts.isEmpty() || old.row.currency == c.currency)
-                        dao.update(CaseRow.from(c))
+                        dao.update(CaseRow.from(c.copy(archived = old.row.archived)))
                         if (old.row.deadline != c.deadline?.toEpochDay()) dao.resetReminder(c.id, ReminderKind.DEADLINE.name)
                         if (old.row.followUp != c.followUp?.toEpochDay()) dao.resetReminder(c.id, ReminderKind.FOLLOW_UP.name)
                         c.id
@@ -152,15 +160,26 @@ class LedgerModel(application: Application) : AndroidViewModel(application) {
     }
     fun receive(caseId: Long, currency: String, amount: Long, day: LocalDate) = write {
         val data = requireNotNull(dao.get(caseId)).snapshot()
-        require(data.record.currency == currency && amount > 0 && !day.isAfter(LocalDate.now()))
+        require(!data.record.archived && data.record.currency == currency && amount > 0 && !day.isAfter(LocalDate.now()))
         dao.insertReceipt(ReceiptRow(caseId = caseId, amount = amount, day = day.toEpochDay()))
     }
-    fun removeReceipt(caseId: Long, id: Long) = write { dao.removeReceipt(caseId, id) }
+    fun removeReceipt(caseId: Long, id: Long) = write {
+        require(dao.get(caseId)?.row?.archived == false)
+        dao.removeReceipt(caseId, id)
+    }
     fun delete(id: Long) = write { dao.remove(id) }
+    fun archive(id: Long, archived: Boolean) = write {
+        val existing = requireNotNull(dao.get(id)).snapshot()
+        // Keep unresolved balances visible on the recovery dashboard.
+        require(!archived || existing.outstanding.signum() == 0)
+        dao.setArchived(id, archived)
+    }
     fun erase() = write { dao.erase() }
     private suspend fun updateFollowUp(id: Long, date: LocalDate?) {
         val next = date?.toEpochDay()
-        if (dao.get(id)?.row?.followUp != next) {
+        val existing = requireNotNull(dao.get(id)).row
+        require(!existing.archived)
+        if (existing.followUp != next) {
             dao.followUp(id, next)
             dao.resetReminder(id, ReminderKind.FOLLOW_UP.name)
         }

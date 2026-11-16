@@ -2,6 +2,8 @@ package app.refundavio
 
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -11,6 +13,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -110,6 +113,31 @@ class DashboardJourneyTest {
                 setLocale(Locale.forLanguageTag(tag))
             }
             assertEquals(tag, expected, context.createConfigurationContext(config).getString(R.string.warranties))
+        }
+    }
+
+    @Test fun exportReportFormatsOpenAndIncludeSavedValues() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val day = LocalDate.of(2026, 11, 16)
+        val sample = CaseSnapshot(RecoveryCase(1, "QA report item", "QA shop", "GBP", 7500, Stage.PROCESSING,
+            note = (1..100).joinToString("\n") { "QA note line $it" }), listOf(Receipt(amount = 2500, day = day)))
+        for (format in listOf(ReportFormat.CSV, ReportFormat.TXT)) {
+            val output = java.io.ByteArrayOutputStream()
+            exportReport(context, listOf(sample), day, format, output)
+            val content = output.toString(Charsets.UTF_8.name())
+            for (value in listOf("QA report item", "75.00", "25.00", "50.00", "QA note line 100")) {
+                assertTrue(format.name, value in content)
+            }
+        }
+        val pdf = File.createTempFile("refundavio-qa-", ".pdf", context.cacheDir)
+        try {
+            pdf.outputStream().use { exportReport(context, listOf(sample), day, ReportFormat.PDF, it) }
+            PdfRenderer(ParcelFileDescriptor.open(pdf, ParcelFileDescriptor.MODE_READ_ONLY)).use { renderer ->
+                assertTrue(renderer.pageCount > 1)
+                renderer.openPage(renderer.pageCount - 1).use { assertTrue(it.width > 0) }
+            }
+        } finally {
+            pdf.delete()
         }
     }
 

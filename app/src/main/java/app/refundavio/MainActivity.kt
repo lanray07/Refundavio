@@ -218,7 +218,9 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
                         when (tab) {
                             Tab.DASHBOARD -> RecoveryScreen(snapshot, today, detail = { recordId = it }, add = { editorId = 0L },
                                 viewReturns = { openTab(Tab.RETURNS, it) }, viewWarranties = { openTab(Tab.WARRANTIES) })
-                            Tab.PURCHASES -> RecordsPage(R.string.purchases, R.string.purchases_hint, cases, today, { recordId = it }, { editorId = 0L })
+                            Tab.PURCHASES -> RecordsPage(R.string.purchases, R.string.purchases_hint,
+                                cases.filter { it.record.archived == (filter == 1) }, today, { recordId = it }, { editorId = 0L },
+                                filter, { filter = it }, filters = listOf(R.string.active_purchases, R.string.archived_purchases))
                             Tab.RETURNS -> RecordsPage(R.string.returns, R.string.returns_hint, when (filter) {
                                 1 -> snapshot.returns
                                 2 -> snapshot.followUps
@@ -226,14 +228,15 @@ private fun Refundavio(reminderDestination: ReminderKind?, consumeReminder: () -
                                 4 -> snapshot.dispatch
                                 5 -> snapshot.waitingForResponse
                                 6 -> snapshot.recent
-                                else -> cases.filter { it.stage != Stage.NOT_REQUESTED }
+                                else -> cases.filter { !it.record.archived && it.stage != Stage.NOT_REQUESTED }
                             }, today, { recordId = it }, { editorId = 0L }, filter, { filter = it })
                             Tab.WARRANTIES -> RecordsPage(R.string.warranties, R.string.warranty_hint,
-                                cases.filter { it.record.warranty != null }.sortedBy { it.record.warranty }, today,
+                                cases.filter { !it.record.archived && it.record.warranty != null }.sortedBy { it.record.warranty }, today,
                                 { recordId = it }, { editorId = 0L }, warranty = true)
                             Tab.MORE -> SettingsPage(spoken, changeSpoken = {
                                 spoken = it; preferences.edit().putBoolean("spoken", it).apply()
-                            }, demo, { demo = !demo; openTab(Tab.DASHBOARD) }, { model.erase() }, ::onVoice)
+                            }, demo, { demo = !demo; openTab(Tab.DASHBOARD) }, { model.erase() }, ::onVoice,
+                                data.orEmpty(), today)
                         }
                     }
                 }

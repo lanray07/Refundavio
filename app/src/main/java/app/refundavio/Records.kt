@@ -43,8 +43,9 @@ internal val Stage.label get() = when (this) {
 
 @Composable
 internal fun RecordsPage(title: Int, hint: Int, cases: List<CaseSnapshot>, date: LocalDate, detail: (Long) -> Unit,
-                         add: () -> Unit, filter: Int = 0, change: ((Int) -> Unit)? = null, warranty: Boolean = false) {
-    val filterLabels = listOf(R.string.all_cases, R.string.deadlines, R.string.followups, R.string.pending,
+                         add: () -> Unit, filter: Int = 0, change: ((Int) -> Unit)? = null,
+                         warranty: Boolean = false, filters: List<Int>? = null) {
+    val filterLabels = filters ?: listOf(R.string.all_cases, R.string.deadlines, R.string.followups, R.string.pending,
         R.string.awaiting_dispatch, R.string.awaiting_response, R.string.recent)
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -54,11 +55,13 @@ internal fun RecordsPage(title: Int, hint: Int, cases: List<CaseSnapshot>, date:
         }
         if (cases.isEmpty()) item {
             Text(stringResource(R.string.no_cases), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (change == null && !warranty) TextButton(onClick = add) { Text(stringResource(R.string.add_purchase)) }
+            if (title == R.string.purchases && filter == 0) TextButton(onClick = add) { Text(stringResource(R.string.add_purchase)) }
         }
         items(cases, key = { it.record.id }) { item ->
             Surface(Modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
-                Box(Modifier.padding(horizontal = 14.dp)) { RecordLine(item, date, if (warranty) 7 else filter, detail) }
+                Box(Modifier.padding(horizontal = 14.dp)) {
+                    RecordLine(item, date, if (warranty) 7 else if (filters != null) 0 else filter, detail)
+                }
             }
         }
     }
@@ -226,7 +229,7 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
                     if (attachmentError) Text(stringResource(R.string.attachment_error), color = MaterialTheme.colorScheme.error)
                 }
             }
-            if (!demo) item {
+            if (!demo && !c.archived) item {
                 Button(onClick = { action = "receive" }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.record_refund)) }
                 OutlinedButton(onClick = { action = "contact" }, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.log_contact)) }
                 if (c.followUp != null && !item.stage.terminal) OutlinedButton(onClick = { action = "reschedule" }, modifier = Modifier.fillMaxWidth()) {
@@ -238,7 +241,7 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
             items(item.receipts, key = { "receipt-${it.id}" }) { receipt ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("${dateLabel(receipt.day, locale)} · ${Money.format(receipt.amount.toBigDecimal(), c.currency, locale)}", Modifier.weight(1f))
-                    if (!demo) IconButton(onClick = { removeId = receipt.id }) { Icon(Icons.Default.Delete, stringResource(R.string.remove_refund)) }
+                    if (!demo && !c.archived) IconButton(onClick = { removeId = receipt.id }) { Icon(Icons.Default.Delete, stringResource(R.string.remove_refund)) }
                 }
             }
             if (item.contacts.isNotEmpty()) item { Text(stringResource(R.string.contact_history), style = MaterialTheme.typography.titleMedium) }
@@ -247,7 +250,10 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
             }
             if (!demo) item {
                 HorizontalDivider()
-                TextButton(onClick = edit) { Text(stringResource(R.string.edit_purchase)) }
+                if (!c.archived) TextButton(onClick = edit) { Text(stringResource(R.string.edit_purchase)) }
+                if (c.archived || item.outstanding.signum() == 0) TextButton(onClick = { model.archive(c.id, !c.archived) }) {
+                    Text(stringResource(if (c.archived) R.string.restore_purchase else R.string.archive_purchase))
+                }
                 TextButton(onClick = { action = "delete" }) { Text(stringResource(R.string.delete_purchase), color = MaterialTheme.colorScheme.error) }
             }
         }
@@ -264,14 +270,14 @@ internal fun CaseDetails(item: CaseSnapshot, today: LocalDate, demo: Boolean, mo
                 dismissButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.cancel)) } })
         }
         "draft" -> {
-            var draft by rememberSaveable { mutableStateOf("") }
             val template = stringResource(R.string.draft_template, c.merchant, c.item)
+            var draft by rememberSaveable { mutableStateOf(template) }
             val clipboard = context.getSystemService(android.content.ClipboardManager::class.java)
             val clipLabel = stringResource(R.string.draft_followup)
             AlertDialog(onDismissRequest = dismiss, title = { Text(clipLabel) },
-                text = { OutlinedTextField(draft.ifEmpty { template }, { draft = it }, maxLines = 9, modifier = Modifier.fillMaxWidth()) },
-                confirmButton = { Button(onClick = {
-                    clipboard.setPrimaryClip(android.content.ClipData.newPlainText(clipLabel, draft.ifEmpty { template }).apply {
+                text = { OutlinedTextField(draft, { draft = it }, maxLines = 9, modifier = Modifier.fillMaxWidth()) },
+                confirmButton = { Button(enabled = draft.isNotBlank(), onClick = {
+                    clipboard.setPrimaryClip(android.content.ClipData.newPlainText(clipLabel, draft).apply {
                         if (android.os.Build.VERSION.SDK_INT >= 24) description.extras = android.os.PersistableBundle().apply {
                             putBoolean("android.content.extra.IS_SENSITIVE", true)
                         }
@@ -332,10 +338,11 @@ private fun Confirm(title: Int, message: Int, close: () -> Unit, action: () -> U
 
 @Composable
 internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo: Boolean, toggleDemo: () -> Unit,
-                          erase: () -> Unit, voice: () -> Unit) {
+                          erase: () -> Unit, voice: () -> Unit, cases: List<CaseSnapshot>, today: LocalDate) {
     var confirm by rememberSaveable { mutableStateOf(false) }
     var reminders by rememberSaveable { mutableStateOf(false) }
     var privacy by rememberSaveable { mutableStateOf(false) }
+    var reports by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val languageOptions = listOf(
         "" to stringResource(R.string.device_language),
@@ -376,6 +383,9 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
             Spacer(Modifier.width(8.dp))
             Text(stringResource(R.string.reminder_settings))
         }
+        OutlinedButton(onClick = { reports = true }, modifier = Modifier.fillMaxWidth(), enabled = !demo && cases.isNotEmpty()) {
+            Text(stringResource(R.string.reports))
+        }
         HorizontalDivider()
         Text(stringResource(R.string.demo_hint))
         OutlinedButton(onClick = toggleDemo, modifier = Modifier.fillMaxWidth()) {
@@ -390,12 +400,15 @@ internal fun SettingsPage(spoken: Boolean, changeSpoken: (Boolean) -> Unit, demo
     }
     if (confirm) Confirm(R.string.erase_data, R.string.erase_warning, { confirm = false }) { confirm = false; erase() }
     if (reminders) ReminderSettingsDialog { reminders = false }
+    if (reports && !demo) ReportsDialog(cases, today) { reports = false }
     if (privacy) AlertDialog(
         onDismissRequest = { privacy = false },
         title = { Text(stringResource(R.string.privacy_policy_title)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 Text(stringResource(R.string.privacy_policy_text))
+                Spacer(Modifier.height(12.dp))
+                Text(stringResource(R.string.report_privacy))
             }
         },
         confirmButton = { TextButton(onClick = { privacy = false }) { Text(stringResource(R.string.close)) } }
